@@ -6,15 +6,15 @@
         "swi_decoder_wrap.cpp",
         "SWIDecoder.cpp"
       ],
-      "include_dirs": [
-        "<!(node -e \"require('node-addon-api').include\")"
-      ],
       "libraries": [
-        "-L./build",        # search path
-        "-lSWIDecoder"      # link libSWIDecoder.so
+        "<(module_root_dir)/libSWIDecoder.so"
       ],
-      "cflags_cc": [
-        "-std=c++17"
+      "include_dirs": [
+        "<(module_root_dir)"
+      ],
+      "cflags": ["-std=c++11"],
+      "ldflags": [
+        "-Wl,-rpath,'$ORIGIN'"
       ]
     }
   ]
