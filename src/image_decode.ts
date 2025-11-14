@@ -4,7 +4,7 @@ const swi = require("../native/build/Release/swi_decoder.node");
 // -------------------------------------------------------
 // CONFIG: toggle between REAL licence WI or TEST WI
 // -------------------------------------------------------
-const TEST_MODE = true;      // <---- change to true to run known-good test
+const TEST_MODE = false;      // <---- change to true to run known-good test
 const TEST_HEX = `
 57490100080008000C000000000000000000004D6F64756C655465737400000000
 785E5D4B4A494847464544434241403F3D3C3B3938363534333231302F2E2D2C
