@@ -17,12 +17,27 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     size_t cmpSize;
     napi_get_buffer_info(env, args[0], (void**)&cmpData, &cmpSize);
 
+    // ---------------------------------------------------------
+    // PATCH: skip WI metadata header (0x2A bytes)
+    // ---------------------------------------------------------
+    const int SWI_OFFSET = 0x2A;
+
+    if (cmpSize <= SWI_OFFSET) {
+        napi_throw_error(env, nullptr, "input too small for WI header");
+        return nullptr;
+    }
+
+    unsigned char* swiPayload = cmpData + SWI_OFFSET;
+    size_t swiSize = cmpSize - SWI_OFFSET;
+
+    // ---------------------------------------------------------
+
     WiDecmpOptions* opts = WiCreateDecmpOptions();
     WiRawImage* raw = WiCreateRawImage();
     WiCmpImage* cmp = WiCreateCmpImage();
 
-    cmp->CmpData = cmpData;
-    cmp->Size = cmpSize;
+    cmp->CmpData = swiPayload;
+    cmp->Size = swiSize;
 
     int r = WiDecompress(opts, raw, cmp);
     if (r != 0) {
