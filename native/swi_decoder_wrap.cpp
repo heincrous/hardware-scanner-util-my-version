@@ -1,4 +1,5 @@
 #include <node_api.h>
+#include <cstdlib>
 #include "SWIDecoder.h"
 
 extern "C" {
