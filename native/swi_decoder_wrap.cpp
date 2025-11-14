@@ -2,8 +2,11 @@
 #include <cstdlib>
 #include "SWIDecoder.h"
 
-// use C++ linkage exactly matching SWIDecoder.cpp
-WiResultImage DecodeImage(unsigned char* imageData, int size);
+WiDecmpOptions* WiCreateDecmpOptions();
+WiRawImage* WiCreateRawImage();
+WiCmpImage* WiCreateCmpImage();
+int WiDecompress(WiDecmpOptions*, WiRawImage*, WiCmpImage*);
+void WiFreeRawImageData(WiRawImage*);
 
 static napi_value decode_swi(napi_env env, napi_callback_info info) {
     size_t argc = 1;
@@ -14,9 +17,15 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     size_t cmpSize;
     napi_get_buffer_info(env, args[0], (void**)&cmpData, &cmpSize);
 
-    WiResultImage result = DecodeImage(cmpData, (int)cmpSize);
+    WiDecmpOptions* opts = WiCreateDecmpOptions();
+    WiRawImage* raw = WiCreateRawImage();
+    WiCmpImage* cmp = WiCreateCmpImage();
 
-    if (result.size <= 0 || result.raw == nullptr) {
+    cmp->CmpData = cmpData;
+    cmp->Size = cmpSize;
+
+    int r = WiDecompress(opts, raw, cmp);
+    if (r != 0) {
         napi_throw_error(env, nullptr, "decode failed");
         return nullptr;
     }
@@ -24,14 +33,18 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     napi_value out;
     napi_create_object(env, &out);
 
-    // size only; width and height unknown
-    napi_value size;
-    napi_create_int32(env, result.size, &size);
-    napi_set_named_property(env, out, "size", size);
+    napi_value w, h;
+    napi_create_int32(env, raw->Width, &w);
+    napi_create_int32(env, raw->Height, &h);
+    napi_set_named_property(env, out, "width", w);
+    napi_set_named_property(env, out, "height", h);
 
+    int dataSize = raw->Width * raw->Height;
     napi_value buf;
-    napi_create_buffer_copy(env, result.size, result.raw, nullptr, &buf);
-    napi_set_named_property(env, out, "rgb", buf);
+    napi_create_buffer_copy(env, dataSize, raw->Raw, nullptr, &buf);
+    napi_set_named_property(env, out, "data", buf);
+
+    WiFreeRawImageData(raw);
 
     return out;
 }
