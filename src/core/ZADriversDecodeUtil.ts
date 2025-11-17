@@ -166,6 +166,8 @@ export class ZADriversBarcodeProcessor {
 		const lengthSection3_12bit = lengthSection3_16bit & 0x0FFF;
 		const imageSectionByteArray = barcodByteArray.subarray(currentPositon, currentPositon + lengthSection3_12bit);
 
+		console.log("lengthSection3_12bit:", lengthSection3_12bit);
+
 		try {
 			const fs = require('fs');
 			fs.writeFileSync('wi_image.raw', Buffer.from(imageSectionByteArray));
