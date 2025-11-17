@@ -9,18 +9,16 @@ int main() {
 
     const char* path = "../src/core/__tests__/female.wi";
 
-    // Working directory
     char cwd[4096];
     getcwd(cwd, sizeof(cwd));
     printf("cwd: %s\n", cwd);
     printf("opening relative path: %s\n", path);
 
-    // Build absolute path manually
     char abs[4096];
-    snprintf(abs, sizeof(abs), "%s/%s", cwd, path);
+    int written = snprintf(abs, sizeof(abs) - 1, "%s/%s", cwd, path);
+    abs[sizeof(abs) - 1] = 0;
     printf("absolute path: %s\n", abs);
 
-    // Size on disk via stat
     struct stat st;
     if (stat(abs, &st) != 0) {
         printf("ERROR: file does not exist\n");
@@ -28,7 +26,6 @@ int main() {
     }
     printf("size on disk: %lld bytes\n", (long long)st.st_size);
 
-    // Open file
     std::ifstream f(abs, std::ios::binary);
     if (!f) {
         printf("ERROR: cannot open file\n");
@@ -45,14 +42,12 @@ int main() {
     unsigned char* full = wi.data();
     int fullSize = wi.size();
 
-    // Print header region
     printf("bytes 0x20 - 0x40:\n");
     for (int i = 0x20; i < 0x40 && i < fullSize; i++) {
         printf("%02X ", full[i]);
     }
     printf("\n");
 
-    // Search for SWI wavelet block start (00 38)
     int foundOffset = -1;
     for (int i = 0; i < fullSize - 1; i++) {
         if (full[i] == 0x00 && full[i+1] == 0x38) {
@@ -69,8 +64,6 @@ int main() {
     printf("found SWI block start at offset: %d (0x%X)\n",
            foundOffset, foundOffset);
 
-
-    // Use the detected offset
     unsigned char* payload = full + foundOffset;
     int payloadSize = fullSize - foundOffset;
 
