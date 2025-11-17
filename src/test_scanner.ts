@@ -1,6 +1,7 @@
+import fs from "fs";
+const swi = require("../native/build/Release/swi_decoder.node");
 import { ZADriversBarcodeProcessor } from './core/ZADriversDecodeUtil';
 import { Buffer } from 'buffer';
-import * as fs from 'fs';
 
 // Helper to format long hex strings into readable lines
 function formatHexBlock(hex: string, lineLength = 64): string[] {
