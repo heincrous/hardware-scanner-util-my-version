@@ -10,6 +10,12 @@ const { BigInteger } = require('jsbn');
 
 const NUMBER_OF_128_BLOCKS = 5;
 
+// Quiet mode to hide internal debug logs
+const QUIET = true;
+function log(...args: any[]) {
+  if (!QUIET) console.log(...args);
+}
+
 export class ZADriversBarcodeProcessor {
 
 	public static process(data: Buffer): ZADecodedData {
@@ -17,13 +23,13 @@ export class ZADriversBarcodeProcessor {
 
 			const { version, blocks } = this.parseZADriversBarcodeBuffer(data);
 
-			console.log(`Successfully parsed barcode with version: ${version} in ${blocks.length} blocks`);
+			log(`Successfully parsed barcode with version: ${version} in ${blocks.length} blocks`);
 
 			const decryptedBlocks = blocks.map((block, index) => {
 				const blockSize = index < NUMBER_OF_128_BLOCKS ? 128 : 74; // First 5 is 128 and last one 74
-				console.log(`Decrypting block ${index + 1} with size ${blockSize}`);
+				log(`Decrypting block ${index + 1} with size ${blockSize}`);
 				const decryptedBlock = this.decryptBlock(block, version, blockSize);
-				console.log(`Decrypted block ${index + 1}`);
+				log(`Decrypted block ${index + 1}`);
 				return decryptedBlock;
 			}
 			);
@@ -55,26 +61,26 @@ export class ZADriversBarcodeProcessor {
 	 */
 	public static parseZADriversBarcodeBuffer(data: Buffer): ZADriversBarcodeData {
 		if (data.length !== 720) {
-			console.log('Invalid data length. Expected 720 bytes.');
+			log('Invalid data length. Expected 720 bytes.');
 		}
 
 		// Read the version bytes
 		const versionHex = data.subarray(0, 4).toString('hex');
-		console.log(`Version Bytes: ${versionHex}`);
+		log(`Version Bytes: ${versionHex}`);
 
 		// Determine the version based on the version bytes
 		const version = versionHex === '01e10245' ? 1 : (versionHex === '019b0945' ? 2 : null);
 		if (version === null) {
 			throw new Error('Unsupported version');
 		}
-		console.log(`Version: ${version}`);
+		log(`Version: ${version}`);
 
 		// Read and verify the padding bytes (next 2 bytes)
 		const paddingBytes = data.subarray(4, 6).toString('hex');
 		if (paddingBytes !== '0000') {
 			throw new Error('Invalid padding bytes. Expected 0000.');
 		}
-		console.log(`Padding Bytes: ${paddingBytes}`);
+		log(`Padding Bytes: ${paddingBytes}`);
 
 		// Define the block sizes
 		const blockSizes = [128, 128, 128, 128, 128, 74];
@@ -82,14 +88,14 @@ export class ZADriversBarcodeProcessor {
 
 		const licenseData = data.subarray(6);
 
-		console.log(`Remaining data ${licenseData.toString('hex')}`);
-		console.log(`License Data: ${licenseData.toString('hex').length / 2} length`);
+		log(`Remaining data ${licenseData.toString('hex')}`);
+		log(`License Data: ${licenseData.toString('hex').length / 2} length`);
 
 		// Initialize offset and read blocks
 		let offset = 0; // Skip the version and the next two zero bytes
 		const blocks = blockSizes.map((size) => {
 			const block = licenseData.subarray(offset, offset + size);
-			console.log(`Block ${block.toString('hex').length / 2} - ${offset + size}: ${block.toString('hex')}`);
+			log(`Block ${block.toString('hex').length / 2} - ${offset + size}: ${block.toString('hex')}`);
 			offset += size;
 			return block;
 		});
@@ -117,7 +123,7 @@ export class ZADriversBarcodeProcessor {
 			const e = new BigInteger(key.e, 16);
 			const n = new BigInteger(key.n, 16);
 			var plaintext = data.modPow(e, n);
-			// console.log(`Plaintext: ${plaintext}`);
+			// log(`Plaintext: ${plaintext}`);
 			var bytes = plaintext.toByteArray();
 			const byteArray = new Uint8Array(bytes);
 			return byteArray;//Buffer.from(byteArray).toString('hex');
@@ -141,7 +147,7 @@ export class ZADriversBarcodeProcessor {
 		// Implement the parsing logic based on the provided specifications
 		const startSequence = getHexValueFromBytes(barcodByteArray.subarray(currentPositon, START_SEQUENCE_LENGTH));
 		if (startSequence !== '0102030405') {
-			console.log(`Invalid format ${startSequence}? Expected 0102030405`);
+			log(`Invalid format ${startSequence}? Expected 0102030405`);
 		}
 
 		currentPositon = START_SEQUENCE_LENGTH;
@@ -160,8 +166,8 @@ export class ZADriversBarcodeProcessor {
 		driverData = this.parseBinarySection(byteSectionByteArray, driverData);
 		currentPositon += lengthSection2;
 		
-		console.log("REMAINING HEX (IMAGE CANDIDATE):");
-		console.log(getHexValueFromBytes(barcodByteArray.subarray(currentPositon)));
+		log("REMAINING HEX (IMAGE CANDIDATE):");
+		log(getHexValueFromBytes(barcodByteArray.subarray(currentPositon)));
 
 		// ---------------------------------------------------------
 		// IMAGE SECTION - extract WI block by raw bytes
@@ -169,18 +175,18 @@ export class ZADriversBarcodeProcessor {
 
 		// Defensive: ensure there *are* bytes left
 		if (currentPositon >= barcodByteArray.length) {
-			console.log("No remaining bytes for image section");
+			log("No remaining bytes for image section");
 			driverData.image = null;
 			return driverData;
 		}
 
 		const imageBytes = barcodByteArray.subarray(currentPositon);
-		console.log("Expected WI size:", imageBytes.length);
-		console.log("Decrypted buffer size:", barcodByteArray.length);
+		log("Expected WI size:", imageBytes.length);
+		log("Decrypted buffer size:", barcodByteArray.length);
 
 		// Defensive: ensure we have enough data to even contain "WI"
 		if (imageBytes.length < 4) {
-			console.log("Image section too small to contain WI header");
+			log("Image section too small to contain WI header");
 			driverData.image = null;
 			return driverData;
 		}
@@ -195,19 +201,19 @@ export class ZADriversBarcodeProcessor {
 		}
 
 		if (wiStart === -1) {
-			console.log("Could not find WI block in decrypted data");
+			log("Could not find WI block in decrypted data");
 			driverData.image = null;
 			return driverData;
 		}
 
-		console.log("Found WI header at offset:", wiStart);
+		log("Found WI header at offset:", wiStart);
 
 		// Extract remainder as WI block
 		const wiBuffer = imageBytes.subarray(wiStart);
 
 		// Defensive: ensure WI is not empty
 		if (wiBuffer.length === 0) {
-			console.log("WI block extracted but empty");
+			log("WI block extracted but empty");
 			driverData.image = null;
 			return driverData;
 		}
@@ -218,15 +224,15 @@ export class ZADriversBarcodeProcessor {
 			const h1 = wiBuffer[1].toString(16).padStart(2, "0");
 			const h2 = wiBuffer[2].toString(16).padStart(2, "0");
 			const h3 = wiBuffer[3].toString(16).padStart(2, "0");
-			console.log("WI header bytes:", h0, h1, h2, h3);
+			log("WI header bytes:", h0, h1, h2, h3);
 		}
 
 		// Dump raw WI bytes
 		try {
 			require("fs").writeFileSync("wi_image.raw", Buffer.from(wiBuffer));
-			console.log("WI image written to wi_image.raw");
+			log("WI image written to wi_image.raw");
 		} catch (err) {
-			console.log("Failed writing wi_image.raw:", err);
+			log("Failed writing wi_image.raw:", err);
 		}
 
 		// Return WI hex
@@ -280,7 +286,7 @@ export class ZADriversBarcodeProcessor {
 		dataHexStringArray = dataHexStringArray.filter((data) => data !== '');
 
 		for (const hexData of dataHexStringArray) {
-			console.log(hex2a(hexData));
+			log(hex2a(hexData));
 		}
 
 		let dataIndex = 0;
