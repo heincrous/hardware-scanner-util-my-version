@@ -23,9 +23,15 @@ int main() {
 
     printf("file size: %zu\n", wi.size());
 
-    // pass the FULL WI stream, not skipping anything
     unsigned char* payload = wi.data();
     int payloadSize = wi.size();
+
+    // add this section
+    printf("first 64 bytes:\n");
+    for (int i = 0; i < 64 && i < payloadSize; i++) {
+        printf("%02X ", payload[i]);
+    }
+    printf("\n");
 
     WiDecmpOptions* opts = WiCreateDecmpOptions();
     WiRawImage* raw = WiCreateRawImage();
@@ -44,3 +50,4 @@ int main() {
 
     return 0;
 }
+
