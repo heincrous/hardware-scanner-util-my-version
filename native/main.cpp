@@ -2,7 +2,9 @@
 #include <fstream>
 #include <vector>
 
-#include "SWIDecoder.h"
+extern "C" {
+    #include "SWIDecoder.h"
+}
 
 int main() {
 
