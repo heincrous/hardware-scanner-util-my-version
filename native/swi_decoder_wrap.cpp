@@ -1,18 +1,22 @@
 #include <node_api.h>
 #include "SWIDecoder.h"
 
+WiDecmpOptions* WiCreateDecmpOptions();
+WiRawImage* WiCreateRawImage();
+WiCmpImage* WiCreateCmpImage();
+int WiDecompress(WiDecmpOptions*, WiRawImage*, WiCmpImage*);
+void WiFreeRawImageData(WiRawImage*);
+
 static napi_value decode_swi(napi_env env, napi_callback_info info) {
 
     size_t argc = 1;
     napi_value args[1];
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    // Read Node.js Buffer
     unsigned char* cmpData;
     size_t cmpSize;
     napi_get_buffer_info(env, args[0], (void**)&cmpData, &cmpSize);
 
-    // Allocate SWI structures
     WiDecmpOptions* opts = WiCreateDecmpOptions();
     WiRawImage* raw = WiCreateRawImage();
     WiCmpImage* cmp = WiCreateCmpImage();
@@ -20,14 +24,12 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     cmp->CmpData = cmpData;
     cmp->Size = cmpSize;
 
-    // Decode
-    int result = WiDecompress(opts, raw, cmp);
-    if (result != 0) {
+    int r = WiDecompress(opts, raw, cmp);
+    if (r != 0) {
         napi_throw_error(env, nullptr, "decode failed");
         return nullptr;
     }
 
-    // Build return object
     napi_value out;
     napi_create_object(env, &out);
 
