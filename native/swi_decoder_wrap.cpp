@@ -27,34 +27,24 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     printf("  cmpSize: %zu bytes\n", cmpSize);
 
     // ---------------------------------------------------------
-    // PATCH: skip WI metadata header (0x2A bytes)
+    // NO OFFSET. Pass WI buffer exactly as provided.
     // ---------------------------------------------------------
 
-    const int SWI_OFFSET = 0x2A;
-
-    printf("  Applying SWI offset: 0x%X (%d)\n", SWI_OFFSET, SWI_OFFSET);
-
-    if (cmpSize <= SWI_OFFSET) {
-        printf("  ERROR: cmpSize smaller than header offset!\n");
-        napi_throw_error(env, nullptr, "input too small for WI header");
-        return nullptr;
-    }
-
-    unsigned char* swiPayload = cmpData + SWI_OFFSET;
-    size_t swiSize = cmpSize - SWI_OFFSET;
+    printf("  Using full WI buffer with NO offset\n");
+    unsigned char* swiPayload = cmpData;
+    size_t swiSize = cmpSize;
 
     printf("  swiPayload pointer: %p\n", swiPayload);
     printf("  swiSize: %zu bytes\n", swiSize);
 
-    // Dump first 16 bytes of payload for inspection
-    printf("  First 16 bytes of SWI payload:\n    ");
+    printf("  First 16 bytes of WI data:\n    ");
     for (int i = 0; i < 16 && i < swiSize; i++) {
         printf("%02X ", swiPayload[i]);
     }
     printf("\n");
 
     // ---------------------------------------------------------
-    // Allocate the decoder structures
+    // Allocate decoder structures
     // ---------------------------------------------------------
 
     WiDecmpOptions* opts = WiCreateDecmpOptions();
@@ -76,7 +66,7 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     printf("  cmp->Size:    %d\n", (int)cmp->Size);
 
     // ---------------------------------------------------------
-    // Call decoder
+    // Decode
     // ---------------------------------------------------------
 
     printf("  Calling WiDecompress...\n");
@@ -95,7 +85,7 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     printf("  Raw pointer:    %p\n", raw->Raw);
 
     // ---------------------------------------------------------
-    // Build JS output object
+    // Build JS output
     // ---------------------------------------------------------
 
     napi_value out;
@@ -104,10 +94,12 @@ static napi_value decode_swi(napi_env env, napi_callback_info info) {
     napi_value w, h;
     napi_create_int32(env, raw->Width, &w);
     napi_create_int32(env, raw->Height, &h);
+
     napi_set_named_property(env, out, "width", w);
     napi_set_named_property(env, out, "height", h);
 
     int dataSize = raw->Width * raw->Height;
+
     napi_value buf;
     napi_create_buffer_copy(env, dataSize, raw->Raw, nullptr, &buf);
     napi_set_named_property(env, out, "data", buf);
