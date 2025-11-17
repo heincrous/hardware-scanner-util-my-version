@@ -6,6 +6,7 @@
 
 import { RSA_KEYS } from '../common/rsaKeys';
 import { ZADecodedData, ZADriversBarcodeData } from '../common/types';
+
 const { BigInteger } = require('jsbn');
 
 const NUMBER_OF_128_BLOCKS = 5;
@@ -35,6 +36,18 @@ export class ZADriversBarcodeProcessor {
 			);
 
 			const licenseData = Buffer.concat(decryptedBlocks);
+
+			// ---------------------------------------------------------
+			// TEMPORARY DEBUG: dump full decrypted RSA stream
+			// ---------------------------------------------------------
+			try {
+				require("fs").writeFileSync("full_decrypted.raw", Buffer.from(licenseData));
+				console.log("Dumped full decrypted buffer to full_decrypted.raw");
+				console.log("Decrypted byte length:", licenseData.length);
+			} catch (err) {
+				console.log("Failed writing full_decrypted.raw:", err);
+			}
+			// ---------------------------------------------------------
 
 			return this.parseDecryptedData(licenseData);
 		} catch (error) {
