@@ -52,8 +52,20 @@ console.log({
 // Print WI hex block cleanly
 console.log('\nWI hex block:');
 
-if (image instanceof Uint8Array) {
-    console.log("WI bytes:", image.length);
+if (image && (image as any).constructor === Uint8Array) {
+    console.log("WI byte length:", image.length);
+
+    const result = swi.decode(image as any);
+
+    console.log("Decoded SWI Image:");
+    console.log({
+        width: result.width,
+        height: result.height,
+        dataLength: result.data.length
+    });
+
+    fs.writeFileSync("decoded.raw", result.data);
 } else {
     console.log("No WI block found.");
 }
+
