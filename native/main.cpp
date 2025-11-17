@@ -52,22 +52,23 @@ int main() {
     }
     printf("\n");
 
-    // Search for the real start of the compressed stream (6B 5E)
+    // Search for SWI wavelet block start (00 38)
     int foundOffset = -1;
     for (int i = 0; i < fullSize - 1; i++) {
-        if (full[i] == 0x6B && full[i+1] == 0x5E) {
+        if (full[i] == 0x00 && full[i+1] == 0x38) {
             foundOffset = i;
             break;
         }
     }
 
     if (foundOffset < 0) {
-        printf("ERROR: could not find 6B 5E sequence in file\n");
+        printf("ERROR: could not find 00 38 SWI block header in file\n");
         return 1;
     }
 
-    printf("found compressed start at offset: %d (0x%X)\n",
+    printf("found SWI block start at offset: %d (0x%X)\n",
            foundOffset, foundOffset);
+
 
     // Use the detected offset
     unsigned char* payload = full + foundOffset;
