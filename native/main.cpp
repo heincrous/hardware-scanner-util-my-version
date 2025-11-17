@@ -1,10 +1,7 @@
 #include <cstdio>
 #include <fstream>
 #include <vector>
-
-extern "C" {
-    #include "SWIDecoder.h"
-}
+#include "SWIDecoder.h"
 
 int main() {
 

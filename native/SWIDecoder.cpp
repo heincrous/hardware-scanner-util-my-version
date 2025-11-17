@@ -1,7 +1,4 @@
-// #include "SWIDecoder.h"
-extern "C" {
 #include "SWIDecoder.h"
-}
 #include <vector>
 #include <stdlib.h>
 #include <string.h>
