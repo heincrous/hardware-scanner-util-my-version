@@ -23,8 +23,9 @@ int main() {
 
     printf("file size: %zu\n", wi.size());
 
-    unsigned char* payload = wi.data() + 4;
-    int payloadSize = wi.size() - 4;
+    // pass the FULL WI stream, not skipping anything
+    unsigned char* payload = wi.data();
+    int payloadSize = wi.size();
 
     WiDecmpOptions* opts = WiCreateDecmpOptions();
     WiRawImage* raw = WiCreateRawImage();
@@ -35,6 +36,11 @@ int main() {
 
     int r = WiDecompress(opts, raw, cmp);
     printf("decode result: %d\n", r);
+
+    if (r == 0) {
+        printf("decoded width: %d\n", raw->Width);
+        printf("decoded height: %d\n", raw->Height);
+    }
 
     return 0;
 }
