@@ -320,16 +320,16 @@ export class ZADriversBarcodeProcessor {
 		return licenseData;
 	}
 
-	private static parseImageSection(data: string): string {
-		// Parse the image data section
-		const imageData = data.match(/57 49 (\d{2} \d{2} .+ )00 00 00 00 00 00 00 00/);
-		if (imageData) {
-			const imageHex = imageData[1].replace(/\s+/g, '');
-			const imageBytes = Buffer.from(imageHex, 'hex');
-			return imageBytes.toString('base64');
-		}
-		return '';
-	}
+	// private static parseImageSection(data: string): string {
+	// 	// Parse the image data section
+	// 	const imageData = data.match(/57 49 (\d{2} \d{2} .+ )00 00 00 00 00 00 00 00/);
+	// 	if (imageData) {
+	// 		const imageHex = imageData[1].replace(/\s+/g, '');
+	// 		const imageBytes = Buffer.from(imageHex, 'hex');
+	// 		return imageBytes.toString('base64');
+	// 	}
+	// 	return '';
+	// }
 
 	private static parseDate(data: string): string {
 		// Implement the logic to parse the date from nibbles
