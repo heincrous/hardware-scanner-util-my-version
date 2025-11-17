@@ -166,7 +166,13 @@ export class ZADriversBarcodeProcessor {
 		const lengthSection3_12bit = lengthSection3_16bit & 0x0FFF;
 		const imageSectionByteArray = barcodByteArray.subarray(currentPositon, currentPositon + lengthSection3_12bit);
 
-		(driverData as any).image = imageSectionByteArray;
+		try {
+			const fs = require('fs');
+			fs.writeFileSync('wi_image.raw', Buffer.from(imageSectionByteArray));
+			console.log('Saved WI image to wi_image.raw');
+		} catch (e) {
+			console.log('Failed to save WI image:', e);
+		}
 
 		//https://github.com/the-mars-rover/rsa_identification/issues/2
 		// Decompression Algorithm: https://pedump.me/7198b62559fb8155733a8b5c3b573e03/#info

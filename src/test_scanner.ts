@@ -3,25 +3,16 @@ const swi = require("../native/build/Release/swi_decoder.node");
 import { ZADriversBarcodeProcessor } from './core/ZADriversDecodeUtil';
 import { Buffer } from 'buffer';
 
-// Helper to format long hex strings into readable lines
-function formatHexBlock(hex: string, lineLength = 64): string[] {
-  const lines = [];
-  for (let i = 0; i < hex.length; i += lineLength) {
-    lines.push(hex.slice(i, i + lineLength));
-  }
-  return lines;
-}
-
 // Load sample base64 barcode
 const base64 = fs.readFileSync('src/core/__tests__/license_sample.base64', 'utf8').trim();
 
 // Convert to raw bytes
 const buffer = Buffer.from(base64, 'base64');
 
-// Decode licence structure
+// Decode licence structure (this also saves wi_image.raw)
 const info = ZADriversBarcodeProcessor.process(buffer);
 
-// Extract only the important information
+// Extract and print textual licence info
 const {
   surname,
   initials,
@@ -31,13 +22,10 @@ const {
   licenseNumber,
   licenseValidityStart,
   licenseValidityExpiry,
-  vehicleLicenses,
-  image,
+  vehicleLicenses
 } = info;
 
-// Print clean summary
 console.log('Driver licence data:\n');
-
 console.log({
   surname,
   initials,
@@ -47,26 +35,34 @@ console.log({
   licenseNumber,
   licenseValidityStart,
   licenseValidityExpiry,
-  vehicleLicenses,
+  vehicleLicenses
 });
 
-// Print WI hex block cleanly
-console.log('\nWI hex block:');
+// Try loading WI image saved by ZADriversDecodeUtil
+let wiData: Uint8Array;
 
-if (image && (image as any).constructor === Uint8Array) {
-    console.log("WI byte length:", image.length);
-
-    const result = swi.decode(image as any);
-
-    console.log("Decoded SWI Image:");
-    console.log({
-        width: result.width,
-        height: result.height,
-        dataLength: result.data.length
-    });
-
-    fs.writeFileSync("decoded.raw", result.data);
-} else {
-    console.log("No WI block found.");
+try {
+  const raw = fs.readFileSync("wi_image.raw");
+  wiData = new Uint8Array(raw);
+  console.log("Loaded wi_image.raw:", wiData.length, "bytes");
+} catch (e) {
+  console.log("No wi_image.raw found. Licence probably contains no WI image.");
+  process.exit(0);
 }
 
+// Decode WI image using native SWI decoder
+try {
+  const result = swi.decode(wiData);
+
+  console.log("Decoded SWI Image:");
+  console.log({
+    width: result.width,
+    height: result.height,
+    dataLength: result.data.length
+  });
+
+  fs.writeFileSync("decoded.raw", result.data);
+  console.log("Decoded image saved to decoded.raw");
+} catch (err) {
+  console.error("Decoder crashed:", err);
+}
