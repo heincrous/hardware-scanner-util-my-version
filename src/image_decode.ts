@@ -12,10 +12,8 @@ const raw = fs.readFileSync("src/core/__tests__/female.wi");
 // Convert to Uint8Array (required for N-API buffer)
 // -------------------------------------------------------
 
-const wi = new Uint8Array(raw.length);
-for (let i = 0; i < raw.length; i++) {
-    wi[i] = raw[i];
-}
+// Convert to real Node buffer
+const wi = Buffer.from(raw);
 
 console.log("WI size:", wi.length);
 console.log("WI header bytes:", wi[0].toString(16), wi[1].toString(16), wi[2].toString(16), wi[3].toString(16));
