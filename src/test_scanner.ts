@@ -52,9 +52,8 @@ console.log({
 // Print WI hex block cleanly
 console.log('\nWI hex block:');
 
-if (image && typeof image === 'string') {
-  const lines = formatHexBlock(image, 64);
-  lines.forEach(line => console.log(line));
+if (image instanceof Uint8Array) {
+    console.log("WI bytes:", image.length);
 } else {
-  console.log('No WI block found.');
+    console.log("No WI block found.");
 }

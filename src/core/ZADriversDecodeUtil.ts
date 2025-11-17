@@ -6,16 +6,9 @@
 
 import { RSA_KEYS } from '../common/rsaKeys';
 import { ZADecodedData, ZADriversBarcodeData } from '../common/types';
-
 const { BigInteger } = require('jsbn');
 
 const NUMBER_OF_128_BLOCKS = 5;
-
-// Quiet mode to hide internal debug logs
-const QUIET = true;
-function log(...args: any[]) {
-  if (!QUIET) console.log(...args);
-}
 
 export class ZADriversBarcodeProcessor {
 
@@ -24,30 +17,18 @@ export class ZADriversBarcodeProcessor {
 
 			const { version, blocks } = this.parseZADriversBarcodeBuffer(data);
 
-			log(`Successfully parsed barcode with version: ${version} in ${blocks.length} blocks`);
+			console.log(`Successfully parsed barcode with version: ${version} in ${blocks.length} blocks`);
 
 			const decryptedBlocks = blocks.map((block, index) => {
 				const blockSize = index < NUMBER_OF_128_BLOCKS ? 128 : 74; // First 5 is 128 and last one 74
-				log(`Decrypting block ${index + 1} with size ${blockSize}`);
+				console.log(`Decrypting block ${index + 1} with size ${blockSize}`);
 				const decryptedBlock = this.decryptBlock(block, version, blockSize);
-				log(`Decrypted block ${index + 1}`);
+				console.log(`Decrypted block ${index + 1}`);
 				return decryptedBlock;
 			}
 			);
 
 			const licenseData = Buffer.concat(decryptedBlocks);
-
-			// ---------------------------------------------------------
-			// TEMPORARY DEBUG: dump full decrypted RSA stream
-			// ---------------------------------------------------------
-			try {
-				require("fs").writeFileSync("full_decrypted.raw", Buffer.from(licenseData));
-				console.log("Dumped full decrypted buffer to full_decrypted.raw");
-				console.log("Decrypted byte length:", licenseData.length);
-			} catch (err) {
-				console.log("Failed writing full_decrypted.raw:", err);
-			}
-			// ---------------------------------------------------------
 
 			return this.parseDecryptedData(licenseData);
 		} catch (error) {
@@ -74,26 +55,26 @@ export class ZADriversBarcodeProcessor {
 	 */
 	public static parseZADriversBarcodeBuffer(data: Buffer): ZADriversBarcodeData {
 		if (data.length !== 720) {
-			log('Invalid data length. Expected 720 bytes.');
+			console.log('Invalid data length. Expected 720 bytes.');
 		}
 
 		// Read the version bytes
 		const versionHex = data.subarray(0, 4).toString('hex');
-		log(`Version Bytes: ${versionHex}`);
+		console.log(`Version Bytes: ${versionHex}`);
 
 		// Determine the version based on the version bytes
 		const version = versionHex === '01e10245' ? 1 : (versionHex === '019b0945' ? 2 : null);
 		if (version === null) {
 			throw new Error('Unsupported version');
 		}
-		log(`Version: ${version}`);
+		console.log(`Version: ${version}`);
 
 		// Read and verify the padding bytes (next 2 bytes)
 		const paddingBytes = data.subarray(4, 6).toString('hex');
 		if (paddingBytes !== '0000') {
 			throw new Error('Invalid padding bytes. Expected 0000.');
 		}
-		log(`Padding Bytes: ${paddingBytes}`);
+		console.log(`Padding Bytes: ${paddingBytes}`);
 
 		// Define the block sizes
 		const blockSizes = [128, 128, 128, 128, 128, 74];
@@ -101,14 +82,14 @@ export class ZADriversBarcodeProcessor {
 
 		const licenseData = data.subarray(6);
 
-		log(`Remaining data ${licenseData.toString('hex')}`);
-		log(`License Data: ${licenseData.toString('hex').length / 2} length`);
+		console.log(`Remaining data ${licenseData.toString('hex')}`);
+		console.log(`License Data: ${licenseData.toString('hex').length / 2} length`);
 
 		// Initialize offset and read blocks
 		let offset = 0; // Skip the version and the next two zero bytes
 		const blocks = blockSizes.map((size) => {
 			const block = licenseData.subarray(offset, offset + size);
-			log(`Block ${block.toString('hex').length / 2} - ${offset + size}: ${block.toString('hex')}`);
+			console.log(`Block ${block.toString('hex').length / 2} - ${offset + size}: ${block.toString('hex')}`);
 			offset += size;
 			return block;
 		});
@@ -136,7 +117,7 @@ export class ZADriversBarcodeProcessor {
 			const e = new BigInteger(key.e, 16);
 			const n = new BigInteger(key.n, 16);
 			var plaintext = data.modPow(e, n);
-			// log(`Plaintext: ${plaintext}`);
+			// console.log(`Plaintext: ${plaintext}`);
 			var bytes = plaintext.toByteArray();
 			const byteArray = new Uint8Array(bytes);
 			return byteArray;//Buffer.from(byteArray).toString('hex');
@@ -160,7 +141,7 @@ export class ZADriversBarcodeProcessor {
 		// Implement the parsing logic based on the provided specifications
 		const startSequence = getHexValueFromBytes(barcodByteArray.subarray(currentPositon, START_SEQUENCE_LENGTH));
 		if (startSequence !== '0102030405') {
-			log(`Invalid format ${startSequence}? Expected 0102030405`);
+			console.log(`Invalid format ${startSequence}? Expected 0102030405`);
 		}
 
 		currentPositon = START_SEQUENCE_LENGTH;
@@ -178,81 +159,19 @@ export class ZADriversBarcodeProcessor {
 		const byteSectionByteArray = barcodByteArray.subarray(currentPositon, currentPositon + lengthSection2);
 		driverData = this.parseBinarySection(byteSectionByteArray, driverData);
 		currentPositon += lengthSection2;
-		
-		log("REMAINING HEX (IMAGE CANDIDATE):");
-		log(getHexValueFromBytes(barcodByteArray.subarray(currentPositon)));
 
-		// ---------------------------------------------------------
-		// IMAGE SECTION - extract WI block by raw bytes
-		// ---------------------------------------------------------
+		// Image section
+		const lengthSection3Array = header.subarray(8, 10);
+		const lengthSection3_16bit = (lengthSection3Array[0] << 8) | lengthSection3Array[1];
+		const lengthSection3_12bit = lengthSection3_16bit & 0x0FFF;
+		const imageSectionByteArray = barcodByteArray.subarray(currentPositon, currentPositon + lengthSection3_12bit);
 
-		// Defensive: ensure there *are* bytes left
-		if (currentPositon >= barcodByteArray.length) {
-			log("No remaining bytes for image section");
-			driverData.image = null;
-			return driverData;
-		}
+		(driverData as any).image = imageSectionByteArray;
 
-		const imageBytes = barcodByteArray.subarray(currentPositon);
-		log("Expected WI size:", imageBytes.length);
-		log("Decrypted buffer size:", barcodByteArray.length);
-
-		// Defensive: ensure we have enough data to even contain "WI"
-		if (imageBytes.length < 4) {
-			log("Image section too small to contain WI header");
-			driverData.image = null;
-			return driverData;
-		}
-
-		// Locate WI header 0x57 0x49
-		let wiStart = -1;
-		for (let i = 0; i < imageBytes.length - 1; i++) {
-			if (imageBytes[i] === 0x57 && imageBytes[i + 1] === 0x49) {
-				wiStart = i;
-				break;
-			}
-		}
-
-		if (wiStart === -1) {
-			log("Could not find WI block in decrypted data");
-			driverData.image = null;
-			return driverData;
-		}
-
-		log("Found WI header at offset:", wiStart);
-
-		// Extract remainder as WI block
-		const wiBuffer = imageBytes.subarray(wiStart);
-
-		// Defensive: ensure WI is not empty
-		if (wiBuffer.length === 0) {
-			log("WI block extracted but empty");
-			driverData.image = null;
-			return driverData;
-		}
-
-		// Check first four bytes
-		if (wiBuffer.length >= 4) {
-			const h0 = wiBuffer[0].toString(16).padStart(2, "0");
-			const h1 = wiBuffer[1].toString(16).padStart(2, "0");
-			const h2 = wiBuffer[2].toString(16).padStart(2, "0");
-			const h3 = wiBuffer[3].toString(16).padStart(2, "0");
-			log("WI header bytes:", h0, h1, h2, h3);
-		}
-
-		// Dump raw WI bytes
-		try {
-			require("fs").writeFileSync("wi_image.raw", Buffer.from(wiBuffer));
-			log("WI image written to wi_image.raw");
-		} catch (err) {
-			log("Failed writing wi_image.raw:", err);
-		}
-
-		// Return WI hex
-		driverData.image = Buffer.from(wiBuffer).toString("hex");
+		//https://github.com/the-mars-rover/rsa_identification/issues/2
+		// Decompression Algorithm: https://pedump.me/7198b62559fb8155733a8b5c3b573e03/#info
 
 		return driverData;
-
 	}
 
 	/**
@@ -299,7 +218,7 @@ export class ZADriversBarcodeProcessor {
 		dataHexStringArray = dataHexStringArray.filter((data) => data !== '');
 
 		for (const hexData of dataHexStringArray) {
-			log(hex2a(hexData));
+			console.log(hex2a(hexData));
 		}
 
 		let dataIndex = 0;
@@ -393,31 +312,16 @@ export class ZADriversBarcodeProcessor {
 		return licenseData;
 	}
 
-	// private static parseImageSection(data: string): string {
-	// 	// Parse the image data section
-	// 	const imageData = data.match(/57 49 (\d{2} \d{2} .+ )00 00 00 00 00 00 00 00/);
-	// 	if (imageData) {
-	// 		const imageHex = imageData[1].replace(/\s+/g, '');
-	// 		const imageBytes = Buffer.from(imageHex, 'hex');
-	// 		return imageBytes.toString('base64');
-	// 	}
-	// 	return '';
-	// }
-
-	// #####################################################################################
-
 	private static parseImageSection(data: string): string {
-		const match = data.match(/57 49 ([0-9a-fA-F ]+)/);
-		if (!match) return '';
-
-		// include the WI header (match[0])
-		const hex = match[0].replace(/ /g, '');
-		const bytes = Buffer.from(hex, 'hex');
-		return bytes.toString('base64');
+		// Parse the image data section
+		const imageData = data.match(/57 49 (\d{2} \d{2} .+ )00 00 00 00 00 00 00 00/);
+		if (imageData) {
+			const imageHex = imageData[1].replace(/\s+/g, '');
+			const imageBytes = Buffer.from(imageHex, 'hex');
+			return imageBytes.toString('base64');
+		}
+		return '';
 	}
-
-	// #####################################################################################
-
 
 	private static parseDate(data: string): string {
 		// Implement the logic to parse the date from nibbles
