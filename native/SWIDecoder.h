@@ -222,6 +222,23 @@ struct T_size_31C {
 //extern "C" __declspec(dllexport) void WiFreeRawImageData(WiRawImage* a1);
 //extern "C" __declspec(dllexport) int WiDestroyDecmpOptions(WiDecmpOptions* a1);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WiDecmpOptions* WiCreateDecmpOptions();
+WiCmpImage* WiCreateCmpImage();
+WiRawImage* WiCreateRawImage();
+int WiDecompress(WiDecmpOptions* arg0, WiRawImage* arg4, WiCmpImage* arg8);
+void WiFreeRawImageData(WiRawImage* a1);
+int WiDestroyCmpImage(WiCmpImage* a1);
+int WiDestroyDecmpOptions(WiDecmpOptions* a1);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 int sub_10011840(int arg_0, int arg_4);
 
 int sub_10012090(int arg_0);
