@@ -9,7 +9,7 @@
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
 long sizeofprt = INTPTR_MAX;
-int sizeof64 = INT64_MAX;
+// int sizeof64 = INT64_MAX;
 int sizeof32 = INT32_MAX;
 
 int memAllocateCnt = 0;
@@ -439,7 +439,7 @@ void sub_1000DAF0(T_size_178 * arg_0) {
 	T_size_178 * esi = arg_0;
 	T_size_24 * edi = esi->pt0xA8;
 	esi->dw0xF0 = sub_1000AB10(edi, 5);//8 4
-	esi->dw0xF4 = (sub_1000AB10(edi, 1) != 0 ? 3 : 1); // ?neg sbb 
+	esi->dw0xF4 = (sub_1000AB10(edi, 1) != 0 ? 3 : 1); // ?neg sbb
 	if (sub_1000AB10(edi, 1))
 	{
 		esi->dw0x10C = sub_1000AB10(edi, 8);//9 good
@@ -471,7 +471,7 @@ int *** sub_1000E100(int arg_0, int arg_4, int arg_8) {
 	return hMem;
 }
 
-//K 
+//K
 unsigned char*** sub_1000E260(int arg_0, int arg_4, int arg_8) {
 	unsigned char*** hebp = (unsigned char***)AllocateMemorySize(arg_8 * 4 * factor64);
 	hebp[0] = (unsigned char**)sub_10001470(arg_0, arg_4 * arg_8, 1);
@@ -506,7 +506,7 @@ unsigned char*** sub_1000E340(int arg_0, int arg_4, int arg_8) {
 	}
 	return ebp;
 }
-//k width, top 
+//k width, top
 void sub_1000E390(unsigned char *** arg_0, unsigned char* arg_4, int arg_8, int arg_C, int arg_10, int arg_14) {
 	if (arg_14 == 1 && arg_10 > 8) {
 		for (int i = arg_14; i > 0; i--) {//iarg_0,arg0+=4
@@ -762,7 +762,7 @@ void sub_1000E780(T_size_178 * arg_0) {
 				DeallocateMemory(edi);
 			}
 			else {
-				//get pesi->hg_B8[0] 
+				//get pesi->hg_B8[0]
 				sub_10014680(pesi->hg0xB0, pesi->hg_B8[0], pesi->dw0xCC, pesi->dw0xD0, pesi->dw0xF0, pesi->dw0xF4, 1 >> (unsigned char)(pesi->dw0xF0 - 1), pesi->dw0x110);
 			}
 		}
@@ -1813,7 +1813,7 @@ void sub_100146F0(int*** hgArg_0, unsigned char** hgArg_4, int arg_8, int arg_C,
 		sub_1000E540(hvar_2004, arg_8, arg_C, arg_14);
 	}
 }
-//k get pesi->hg_B8[0] 
+//k get pesi->hg_B8[0]
 unsigned char** sub_10014680(int*** hgMem, unsigned char** hgArg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18, int arg_1C) {
 	unsigned short* hesi = (unsigned short*)AllocateMemorySize((1 << (unsigned char)arg_10) * 2);
 	if (!hesi) return 0;
@@ -8353,7 +8353,7 @@ void sub_10028700(T_size_14* arg_0, int arg_4) {
 		pw0C[peax->dw0x08 * 3] = (peax->dw0x08 - 1);//3
 		pw04[pw0C[peax->dw0x08 * 3 + 2]] = peax->dw0x08;
 		pw0C[(peax->dw0x08 - 1) * 3 + 2] = peax->dw0x08; //2
-		pw0C[(peax->dw0x08 - 1) * 3 + 1] = pw0C[(peax->dw0x08 - 1) * 3 + 1] / 256 * 256;//unsigned char ptr ? 
+		pw0C[(peax->dw0x08 - 1) * 3 + 1] = pw0C[(peax->dw0x08 - 1) * 3 + 1] / 256 * 256;//unsigned char ptr ?
 		pw0C[(peax->dw0x08 + 1) * 3 + 2] = arg_4;//8
 		pw0C[(peax->dw0x08 + 1) * 3 + 1] = pw0C[(peax->dw0x08 + 1) * 3 + 1] / 256 * 256 + 1;//unsigned char ptr ?
 		parg0_10[peax->dw0x08 + 1] = 0;
