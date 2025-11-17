@@ -12063,6 +12063,7 @@ int WiDecompress(WiDecmpOptions * arg_0, WiRawImage * arg_4, WiCmpImage* arg_8) 
 	ebx->AppExtensionLength = pesi->AELen_174;
 	DeallocateMemory(pebp);
 	//printf("Alocated : %i, Deallocated %i, Diff %i\n", memAllocateCnt, memDeallocateCnt, memAllocateCnt - memDeallocateCnt);
+	printf("internal error: %d\n", pesi->dw0x154);
 	return pesi->dw0x154;
 }
 
