@@ -5,7 +5,8 @@ const swi = require("../native/build/Release/swi_decoder.node");
 // Load WI image (already extracted from licence)
 // -------------------------------------------------------
 
-const raw = fs.readFileSync("wi_image.raw");
+// const raw = fs.readFileSync("wi_image.raw");
+const raw = fs.readFileSync("src/core/__tests__/female.wi");
 
 // -------------------------------------------------------
 // Convert to Uint8Array (required for N-API buffer)
