@@ -20,15 +20,30 @@ int main() {
 
     printf("file size: %zu\n", wi.size());
 
-    unsigned char* payload = wi.data();
-    int payloadSize = wi.size();
+    // full buffer
+    unsigned char* full = wi.data();
+    int fullSize = wi.size();
 
-    // add this section
+    // print header preview
     printf("first 64 bytes:\n");
-    for (int i = 0; i < 64 && i < payloadSize; i++) {
-        printf("%02X ", payload[i]);
+    for (int i = 0; i < 64 && i < fullSize; i++) {
+        printf("%02X ", full[i]);
     }
     printf("\n");
+
+    // required WI header skip
+    const int OFFSET = 0x2A;
+
+    if (fullSize <= OFFSET) {
+        printf("file too small\n");
+        return 1;
+    }
+
+    unsigned char* payload = full + OFFSET;
+    int payloadSize = fullSize - OFFSET;
+
+    printf("payload starts with: %02X %02X %02X %02X\n",
+        payload[0], payload[1], payload[2], payload[3]);
 
     WiDecmpOptions* opts = WiCreateDecmpOptions();
     WiRawImage* raw = WiCreateRawImage();
@@ -47,4 +62,3 @@ int main() {
 
     return 0;
 }
-
