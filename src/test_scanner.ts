@@ -1,7 +1,15 @@
 import fs from "fs";
-const swi = require("../native/build/Release/swi_decoder.node");
 import { ZADriversBarcodeProcessor } from './core/ZADriversDecodeUtil';
 import { Buffer } from 'buffer';
+
+// Helper to format long hex strings into readable lines
+function formatHexBlock(hex: string, lineLength = 64): string[] {
+  const lines = [];
+  for (let i = 0; i < hex.length; i += lineLength) {
+    lines.push(hex.slice(i, i + lineLength));
+  }
+  return lines;
+}
 
 // Load sample base64 barcode
 const base64 = fs.readFileSync('src/core/__tests__/license_sample.base64', 'utf8').trim();
@@ -38,31 +46,14 @@ console.log({
   vehicleLicenses
 });
 
-// Try loading WI image saved by ZADriversDecodeUtil
-let wiData: Uint8Array;
-
+// Print WI block from wi_image.raw
 try {
   const raw = fs.readFileSync("wi_image.raw");
-  wiData = new Uint8Array(raw);
-  console.log("Loaded wi_image.raw:", wiData.length, "bytes");
-} catch (e) {
-  console.log("No wi_image.raw found. Licence probably contains no WI image.");
-  process.exit(0);
-}
+  const hex = Buffer.from(raw).toString("hex");
 
-// Decode WI image using native SWI decoder
-try {
-  const result = swi.decode(wiData);
-
-  console.log("Decoded SWI Image:");
-  console.log({
-    width: result.width,
-    height: result.height,
-    dataLength: result.data.length
-  });
-
-  fs.writeFileSync("decoded.raw", result.data);
-  console.log("Decoded image saved to decoded.raw");
-} catch (err) {
-  console.error("Decoder crashed:", err);
+  console.log("\nWI hex block:\n");
+  const lines = formatHexBlock(hex, 64);
+  lines.forEach(line => console.log(line));
+} catch {
+  console.log("\nNo WI block found.");
 }
