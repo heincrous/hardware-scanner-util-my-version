@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cstdint>
+#include <cstdio>
 // #include <jni.h>
 // #include <jni.h>
 
