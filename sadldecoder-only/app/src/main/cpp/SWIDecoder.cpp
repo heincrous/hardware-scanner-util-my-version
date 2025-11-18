@@ -6,6 +6,8 @@
 // #include <jni.h>
 // #include <jni.h>
 
+WiRawImage* DecodeImage(const unsigned char* data, int size);
+
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
 long sizeofprt = INTPTR_MAX;
@@ -12198,4 +12200,36 @@ extern "C" {
 //     // Step 7: Return the output byte array
 //     return output;
 // }
+
+unsigned char* GetDecodedPhotoNative(const unsigned char* photo_data, int size, int* outSize) {
+    if (!photo_data || size <= 0) {
+        *outSize = 0;
+        return nullptr;
+    }
+
+    WiRawImage* decoded = DecodeImage(photo_data, size); 
+    if (!decoded || !decoded->Raw || decoded->Width <= 0 || decoded->Height <= 0) {
+        *outSize = 0;
+        return nullptr;
+    }
+
+    int bufferSize = decoded->Width * decoded->Height * (decoded->BitsPerPixel / 8);
+    unsigned char* output = (unsigned char*)AllocateMemorySize(bufferSize);
+    if (!output) {
+        *outSize = 0;
+        return nullptr;
+    }
+
+    memcpy(output, decoded->Raw, bufferSize);
+    *outSize = bufferSize;
+
+    WiFreeRawImageData(decoded);
+    DeallocateMemory(decoded);
+
+    return output;
+}
+
+
+
+
 
