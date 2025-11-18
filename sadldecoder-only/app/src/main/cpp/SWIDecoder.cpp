@@ -8,8 +8,6 @@
 #include <cstring>
 #include <cstdlib>
 
-WiRawImage* DecodeImage(const unsigned char* data, int size);
-
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
 long sizeofprt = INTPTR_MAX;
