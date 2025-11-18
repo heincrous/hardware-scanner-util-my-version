@@ -5,6 +5,8 @@
 #include <cstdint>
 // #include <jni.h>
 // #include <jni.h>
+#include <cstring>
+#include <cstdlib>
 
 WiRawImage* DecodeImage(const unsigned char* data, int size);
 
@@ -12201,13 +12203,13 @@ extern "C" {
 //     return output;
 // }
 
-unsigned char* GetDecodedPhotoNative(const unsigned char* photo_data, int size, int* outSize) {
-    if (!photo_data || size <= 0) {
-        *outSize = 0;
-        return nullptr;
-    }
+extern "C" unsigned char* GetDecodedPhotoNative(
+    const unsigned char* photo_data,
+    int size,
+    int* outSize
+) {
+    WiRawImage* decoded = DecodeImage(photo_data, size);
 
-    WiRawImage* decoded = DecodeImage(photo_data, size); 
     if (!decoded || !decoded->Raw || decoded->Width <= 0 || decoded->Height <= 0) {
         *outSize = 0;
         return nullptr;
@@ -12215,12 +12217,9 @@ unsigned char* GetDecodedPhotoNative(const unsigned char* photo_data, int size, 
 
     int bufferSize = decoded->Width * decoded->Height * (decoded->BitsPerPixel / 8);
     unsigned char* output = (unsigned char*)AllocateMemorySize(bufferSize);
-    if (!output) {
-        *outSize = 0;
-        return nullptr;
-    }
 
     memcpy(output, decoded->Raw, bufferSize);
+
     *outSize = bufferSize;
 
     WiFreeRawImageData(decoded);
@@ -12228,6 +12227,7 @@ unsigned char* GetDecodedPhotoNative(const unsigned char* photo_data, int size, 
 
     return output;
 }
+
 
 
 

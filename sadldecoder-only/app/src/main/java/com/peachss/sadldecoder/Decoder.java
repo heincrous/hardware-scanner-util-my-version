@@ -20,6 +20,9 @@ import java.util.Base64;
 import com.peachss.sadldecoder.utils.LicenseInfo;
 // import com.peachss.sadldecoder.utils.SADLUtils;
 
+import com.sun.jna.*;
+import com.sun.jna.ptr.IntByReference;
+
 
 public class Decoder {
 
@@ -401,5 +404,26 @@ public class Decoder {
      * which is packaged with this application.
      */
     // public static native byte[] getDecodedPhoto(byte[] photoData, int size);
-    public static byte[] getDecodedPhoto(byte[] photoData, int size);
+
+    public static byte[] getDecodedPhoto(byte[] photoData, int size) {
+        if (photoData == null || size <= 0) return null;
+
+        IntByReference outSize = new IntByReference();
+        Pointer ptr = SWIDecoderLib.INSTANCE.GetDecodedPhotoNative(photoData, size, outSize);
+
+        if (ptr == null || outSize.getValue() <= 0) return null;
+
+        byte[] output = ptr.getByteArray(0, outSize.getValue());
+        Native.free(Pointer.nativeValue(ptr));
+
+        return output;
+    }
+
+    // JNA interface to call the native C++ function
+    private interface SWIDecoderLib extends Library {
+        SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
+
+        Pointer GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
+    }
+
 }
