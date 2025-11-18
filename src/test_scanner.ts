@@ -20,15 +20,12 @@ const buffer = Buffer.from(base64, 'base64');
 // Retrieve raw RSA-encrypted blocks before decryption
 const { version, blocks } = ZADriversBarcodeProcessor.parseZADriversBarcodeBuffer(buffer);
 
-console.log('\nEncrypted RSA blocks:\n');
+// Combine all RSA blocks into one hex string
+const combinedRSAHex = Buffer.concat(blocks).toString('hex');
 
-blocks.forEach((block, index) => {
-  const hex = block.toString('hex');
-  console.log(`Block ${index + 1} (${block.length} bytes):`);
-  const lines = formatHexBlock(hex, 64);
-  lines.forEach(line => console.log(line));
-  console.log('');
-});
+console.log('\nEncrypted RSA hex block:\n');
+formatHexBlock(combinedRSAHex, 64).forEach(line => console.log(line));
+console.log('');
 
 // Now run the full decode pipeline
 const info = ZADriversBarcodeProcessor.process(buffer);
