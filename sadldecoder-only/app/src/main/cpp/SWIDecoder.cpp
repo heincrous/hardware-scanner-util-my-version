@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <string.h>
+#include <cstdint>
 // #include <jni.h>
 // #include <jni.h>
 
