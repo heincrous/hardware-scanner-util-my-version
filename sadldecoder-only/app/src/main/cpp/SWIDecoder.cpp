@@ -12231,6 +12231,11 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     return output;
 }
 
+extern "C" void FreeMemory(unsigned char* p) {
+    DeallocateMemory(p);
+}
+
+
 
 
 

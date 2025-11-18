@@ -414,7 +414,8 @@ public class Decoder {
         if (ptr == null || outSize.getValue() <= 0) return null;
 
         byte[] output = ptr.getByteArray(0, outSize.getValue());
-        Native.free(Pointer.nativeValue(ptr));
+        SWIDecoderLib.INSTANCE.FreeMemory(ptr);
+        return output;
 
         return output;
     }
@@ -424,6 +425,8 @@ public class Decoder {
         SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
 
         Pointer GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
+
+        void FreeMemory(Pointer p);
     }
 
 }
