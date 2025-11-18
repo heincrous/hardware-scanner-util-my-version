@@ -17,7 +17,20 @@ const base64 = fs.readFileSync('src/core/__tests__/license_sample.base64', 'utf8
 // Convert to raw bytes
 const buffer = Buffer.from(base64, 'base64');
 
-// Decode licence structure (this also saves wi_image.raw)
+// Retrieve raw RSA-encrypted blocks before decryption
+const { version, blocks } = ZADriversBarcodeProcessor.parseZADriversBarcodeBuffer(buffer);
+
+console.log('\nEncrypted RSA blocks:\n');
+
+blocks.forEach((block, index) => {
+  const hex = block.toString('hex');
+  console.log(`Block ${index + 1} (${block.length} bytes):`);
+  const lines = formatHexBlock(hex, 64);
+  lines.forEach(line => console.log(line));
+  console.log('');
+});
+
+// Now run the full decode pipeline
 const info = ZADriversBarcodeProcessor.process(buffer);
 
 // Extract and print textual licence info
