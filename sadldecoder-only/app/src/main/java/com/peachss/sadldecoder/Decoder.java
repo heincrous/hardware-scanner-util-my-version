@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import android.graphics.Bitmap;
-import android.util.Base64;
+// import android.graphics.Bitmap;
+// import android.util.Base64;
 
 import com.peachss.sadldecoder.utils.LicenseInfo;
 import com.peachss.sadldecoder.utils.SADLUtils;
