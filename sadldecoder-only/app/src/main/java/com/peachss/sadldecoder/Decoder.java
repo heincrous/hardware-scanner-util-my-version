@@ -15,9 +15,10 @@ import java.util.Arrays;
 
 // import android.graphics.Bitmap;
 // import android.util.Base64;
+import java.util.Base64;
 
 import com.peachss.sadldecoder.utils.LicenseInfo;
-import com.peachss.sadldecoder.utils.SADLUtils;
+// import com.peachss.sadldecoder.utils.SADLUtils;
 
 
 public class Decoder {
@@ -348,28 +349,28 @@ public class Decoder {
         BigInteger m = null;
         if (version == 2) {
             if (size == 128) {
-                m = new BigInteger(Base64.decode("AMqfGO9sPz+kxaRh/qVKsZQGul7NdG1gonSS3KPXTjtcHTFfexA4MkGAmwKeu9XeTRFgMMxX99WmyaFvNzuxSlCFI/foCkx0TZCFZjpKFHLXryxWrkG1Bl9++gKTvTJ4rWk1RvnxYhm3n/Rxo2NoJM/822Oo7YBZ5rmk8NuJU4HL", Base64.DEFAULT));
-                e = new BigInteger(Base64.decode("GHCS2mRUzrGFPmkV+EZqBQ==", Base64.DEFAULT));
+                m = new BigInteger(Base64.getDecoder().decode("AMqfGO9sPz+kxaRh/qVKsZQGul7NdG1gonSS3KPXTjtcHTFfexA4MkGAmwKeu9XeTRFgMMxX99WmyaFvNzuxSlCFI/foCkx0TZCFZjpKFHLXryxWrkG1Bl9++gKTvTJ4rWk1RvnxYhm3n/Rxo2NoJM/822Oo7YBZ5rmk8NuJU4HL", Base64.DEFAULT));
+                e = new BigInteger(Base64.getDecoder().decode("GHCS2mRUzrGFPmkV+EZqBQ==", Base64.DEFAULT));
 //    			o = new RSAKeyParameters(false,
 //    			new BigInteger(Base64.getDecoder().decode("AMqfGO9sPz+kxaRh/qVKsZQGul7NdG1gonSS3KPXTjtcHTFfexA4MkGAmwKeu9XeTRFgMMxX99WmyaFvNzuxSlCFI/foCkx0TZCFZjpKFHLXryxWrkG1Bl9++gKTvTJ4rWk1RvnxYhm3n/Rxo2NoJM/822Oo7YBZ5rmk8NuJU4HL")),
 //    			new BigInteger(Base64.getDecoder().decode("GHCS2mRUzrGFPmkV+EZqBQ==")));
             } else if (size == 74) {
-                m = new BigInteger(Base64.decode("ALQEoN8R0crP8aGgSNTVc/lTpixYPXSSWSdWGm16HisUBCUmr3C1UFRzkOpux0jTD9uBrbSQ4MNqGYa0BLL19p712htmPllQkTDn", Base64.DEFAULT));
-                e = new BigInteger(Base64.decode("MJz+2XGf4qXiDJu0R2U4Kw==", Base64.DEFAULT));
+                m = new BigInteger(Base64.getDecoder().decode("ALQEoN8R0crP8aGgSNTVc/lTpixYPXSSWSdWGm16HisUBCUmr3C1UFRzkOpux0jTD9uBrbSQ4MNqGYa0BLL19p712htmPllQkTDn", Base64.DEFAULT));
+                e = new BigInteger(Base64.getDecoder().decode("MJz+2XGf4qXiDJu0R2U4Kw==", Base64.DEFAULT));
 //    			o = new RSAKeyParameters(false,
 //    	    			new BigInteger(Base64.getDecoder().decode("ALQEoN8R0crP8aGgSNTVc/lTpixYPXSSWSdWGm16HisUBCUmr3C1UFRzkOpux0jTD9uBrbSQ4MNqGYa0BLL19p712htmPllQkTDn")),
 //    	    			new BigInteger(Base64.getDecoder().decode("MJz+2XGf4qXiDJu0R2U4Kw==")));
             }
         } else {
             if (size == 128) {
-                m = new BigInteger(Base64.decode("AP7S4cJ+M2MxbncxenpSxUmBOVGGvkl0dgxyUY1j4FRKSNCIszLFsMNwx2XWXZg8H53gpCsxDMwHrncL0rYdak3M6sdXaJvcv2CEePrzEvYIfMSWw3Ys9cRlHK7No0mfrn7bfrQOPhjrMEFw6R7VsVaqzm9DLW7KbMNYUd6MZ49n", Base64.DEFAULT));
-                e = new BigInteger(Base64.decode("ALt5f/3sf55Cydb3mxNwWds=", Base64.DEFAULT));
+                m = new BigInteger(Base64.getDecoder().decode("AP7S4cJ+M2MxbncxenpSxUmBOVGGvkl0dgxyUY1j4FRKSNCIszLFsMNwx2XWXZg8H53gpCsxDMwHrncL0rYdak3M6sdXaJvcv2CEePrzEvYIfMSWw3Ys9cRlHK7No0mfrn7bfrQOPhjrMEFw6R7VsVaqzm9DLW7KbMNYUd6MZ49n", Base64.DEFAULT));
+                e = new BigInteger(Base64.getDecoder().decode("ALt5f/3sf55Cydb3mxNwWds=", Base64.DEFAULT));
 //    			o = new RSAKeyParameters(false,
 //    			new BigInteger(Base64.getDecoder().decode("AP7S4cJ+M2MxbncxenpSxUmBOVGGvkl0dgxyUY1j4FRKSNCIszLFsMNwx2XWXZg8H53gpCsxDMwHrncL0rYdak3M6sdXaJvcv2CEePrzEvYIfMSWw3Ys9cRlHK7No0mfrn7bfrQOPhjrMEFw6R7VsVaqzm9DLW7KbMNYUd6MZ49n")),
 //    			new BigInteger(Base64.getDecoder().decode("ALt5f/3sf55Cydb3mxNwWds=")));
             } else if (size == 74) {
-                m = new BigInteger(Base64.decode("AP887GtfQOPDZhRRufz67zrrBtwjKcDm9NzMknlyZxbOFbvgXu0sVxG8+PW2yPcnbbXEO/qjBA3AGrFLnE0W9xwM5eqVPwx1TGsX", Base64.DEFAULT));
-                e = new BigInteger(Base64.decode("ANsFuoItmswz+rfY9Cf5zmU=", Base64.DEFAULT));
+                m = new BigInteger(Base64.getDecoder().decode("AP887GtfQOPDZhRRufz67zrrBtwjKcDm9NzMknlyZxbOFbvgXu0sVxG8+PW2yPcnbbXEO/qjBA3AGrFLnE0W9xwM5eqVPwx1TGsX", Base64.DEFAULT));
+                e = new BigInteger(Base64.getDecoder().decode("ANsFuoItmswz+rfY9Cf5zmU=", Base64.DEFAULT));
 //    			o = new RSAKeyParameters(false,
 //    	    			new BigInteger(Base64.getDecoder().decode("AP887GtfQOPDZhRRufz67zrrBtwjKcDm9NzMknlyZxbOFbvgXu0sVxG8+PW2yPcnbbXEO/qjBA3AGrFLnE0W9xwM5eqVPwx1TGsX")),
 //    	    			new BigInteger(Base64.getDecoder().decode("ANsFuoItmswz+rfY9Cf5zmU=")));
