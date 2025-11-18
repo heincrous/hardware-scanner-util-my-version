@@ -2,8 +2,8 @@
 #include <vector>
 #include <stdlib.h>
 #include <string.h>
-#include <jni.h>
-#include <jni.h>
+// #include <jni.h>
+// #include <jni.h>
 
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
@@ -12153,48 +12153,48 @@ extern "C" {
 }
 
 
-extern "C" JNIEXPORT jbyteArray JNICALL
-Java_com_peachss_sadldecoder_Decoder_getDecodedPhoto(JNIEnv *env, jclass clazz,
-                                                     jbyteArray photo_data, jint size) {
+// extern "C" JNIEXPORT jbyteArray JNICALL
+// Java_com_peachss_sadldecoder_Decoder_getDecodedPhoto(JNIEnv *env, jclass clazz,
+//                                                      jbyteArray photo_data, jint size) {
 
-    // Check if photo_data is valid
-    if (photo_data == nullptr) {
-        return nullptr; // or handle the error appropriately
-    }
+//     // Check if photo_data is valid
+//     if (photo_data == nullptr) {
+//         return nullptr; // or handle the error appropriately
+//     }
 
-    // Step 1: Get the length of the byte array
-    jsize length = env->GetArrayLength(photo_data);
-    if (size > length) {
-        return nullptr; // or handle the error appropriately
-    }
+//     // Step 1: Get the length of the byte array
+//     jsize length = env->GetArrayLength(photo_data);
+//     if (size > length) {
+//         return nullptr; // or handle the error appropriately
+//     }
 
-    // Step 2: Get a pointer to the byte array
-    jbyte *input = env->GetByteArrayElements(photo_data, nullptr);
-    if (input == nullptr) {
-        return nullptr; // Handle memory allocation failure
-    }
+//     // Step 2: Get a pointer to the byte array
+//     jbyte *input = env->GetByteArrayElements(photo_data, nullptr);
+//     if (input == nullptr) {
+//         return nullptr; // Handle memory allocation failure
+//     }
 
-    // Step 3: Decode the image
-    WiResultImage decode = DecodeImage((unsigned char *) input, size + 1);
+//     // Step 3: Decode the image
+//     WiResultImage decode = DecodeImage((unsigned char *) input, size + 1);
 
-    // Step 4: Release the byte array elements
-    env->ReleaseByteArrayElements(photo_data, input, JNI_COMMIT);
+//     // Step 4: Release the byte array elements
+//     env->ReleaseByteArrayElements(photo_data, input, JNI_COMMIT);
 
-    // Check if the decoding was successful
-    if (decode.size <= 0 || decode.raw == nullptr) {
-        return nullptr; // or handle the error appropriately
-    }
+//     // Check if the decoding was successful
+//     if (decode.size <= 0 || decode.raw == nullptr) {
+//         return nullptr; // or handle the error appropriately
+//     }
 
-    // Step 5: Create a new byte array for the decoded data
-    jbyteArray output = env->NewByteArray(decode.size);
-    if (output == nullptr) {
-         return nullptr; // Handle memory allocation failure
-    }
+//     // Step 5: Create a new byte array for the decoded data
+//     jbyteArray output = env->NewByteArray(decode.size);
+//     if (output == nullptr) {
+//          return nullptr; // Handle memory allocation failure
+//     }
 
-    // Step 6: Set the byte array region with the decoded data
-    env->SetByteArrayRegion(output, 0, decode.size, (jbyte *) decode.raw);
+//     // Step 6: Set the byte array region with the decoded data
+//     env->SetByteArrayRegion(output, 0, decode.size, (jbyte *) decode.raw);
 
-    // Step 7: Return the output byte array
-    return output;
-}
+//     // Step 7: Return the output byte array
+//     return output;
+// }
 
