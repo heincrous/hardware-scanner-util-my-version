@@ -416,8 +416,6 @@ public class Decoder {
         byte[] output = ptr.getByteArray(0, outSize.getValue());
         SWIDecoderLib.INSTANCE.FreeMemory(ptr);
         return output;
-
-        return output;
     }
 
     // JNA interface to call the native C++ function
