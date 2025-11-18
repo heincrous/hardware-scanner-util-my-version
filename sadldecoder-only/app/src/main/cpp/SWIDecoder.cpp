@@ -12202,17 +12202,18 @@ extern "C" {
 // }
 
 extern "C" unsigned char* GetDecodedPhotoNative(
-    unsigned char* photo_data,
+    void* photo_data,
     int size,
     int* outSize
 ) {
-    if (!photo_data || size <= 0) {
+    unsigned char* bytes = (unsigned char*) photo_data;
+
+    if (!bytes || size <= 0) {
         *outSize = 0;
         return nullptr;
     }
 
-    // Call DecodeImage correctly
-    WiResultImage decoded = DecodeImage(photo_data, size);
+    WiResultImage decoded = DecodeImage(bytes, size);
 
     if (decoded.size <= 0 || decoded.raw == nullptr) {
         *outSize = 0;
@@ -12220,11 +12221,6 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     }
 
     unsigned char* output = (unsigned char*) AllocateMemorySize(decoded.size);
-    if (!output) {
-        *outSize = 0;
-        return nullptr;
-    }
-
     memcpy(output, decoded.raw, decoded.size);
     *outSize = decoded.size;
 
@@ -12244,11 +12240,3 @@ extern "C" unsigned char* AllocateInputBuffer(int size) {
 extern "C" void FreeInputBuffer(unsigned char* p) {
     DeallocateMemory(p);
 }
-
-
-
-
-
-
-
-
