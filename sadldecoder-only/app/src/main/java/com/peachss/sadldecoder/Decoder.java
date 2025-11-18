@@ -400,5 +400,6 @@ public class Decoder {
      * A native method that is implemented by the 'SWIDecoder' native library,
      * which is packaged with this application.
      */
-    public static native byte[] getDecodedPhoto(byte[] photoData, int size);
+    // public static native byte[] getDecodedPhoto(byte[] photoData, int size);
+    public static byte[] getDecodedPhoto(byte[] photoData, int size);
 }
