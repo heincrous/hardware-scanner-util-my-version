@@ -12206,26 +12206,54 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     int size,
     int* outSize
 ) {
+    printf("\n[Native] GetDecodedPhotoNative called\n");
+    printf("[Native] photo_data pointer: %p\n", photo_data);
+    printf("[Native] size: %d\n", size);
+    fflush(stdout);
+
     unsigned char* bytes = (unsigned char*) photo_data;
 
     if (!bytes || size <= 0) {
+        printf("[Native] invalid input\n");
+        fflush(stdout);
         *outSize = 0;
         return nullptr;
     }
 
+    printf("[Native] first 16 bytes of input:\n");
+    for (int i = 0; i < 16 && i < size; i++) {
+        printf("%02X ", bytes[i]);
+    }
+    printf("\n");
+    fflush(stdout);
+
     WiResultImage decoded = DecodeImage(bytes, size);
 
+    printf("[Native] decoded.raw: %p\n", decoded.raw);
+    printf("[Native] decoded.size: %d\n", decoded.size);
+    fflush(stdout);
+
     if (decoded.size <= 0 || decoded.raw == nullptr) {
+        printf("[Native] decode failed\n");
+        fflush(stdout);
         *outSize = 0;
         return nullptr;
     }
 
     unsigned char* output = (unsigned char*) AllocateMemorySize(decoded.size);
+
+    printf("[Native] output allocated at: %p\n", output);
+    fflush(stdout);
+
     memcpy(output, decoded.raw, decoded.size);
     *outSize = decoded.size;
 
+    printf("[Native] returning output\n");
+    fflush(stdout);
+
     return output;
 }
+
 
 extern "C" void FreeMemory(unsigned char* p) {
     DeallocateMemory(p);
