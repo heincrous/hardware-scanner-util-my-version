@@ -1,1 +1,0 @@
-cmd_Release/swi_decoder.node := c++ -bundle -undefined dynamic_lookup -Wl,-search_paths_first -mmacosx-version-min=10.15 -arch arm64 -L./Release -stdlib=libc++  -o Release/swi_decoder.node Release/obj.target/swi_decoder/swi_decoder_wrap.o Release/obj.target/swi_decoder/SWIDecoder.o 
