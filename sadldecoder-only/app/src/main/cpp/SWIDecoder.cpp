@@ -12256,16 +12256,17 @@ extern "C" unsigned char* GetDecodedPhotoNative(
 }
 
 
-extern "C" void FreeMemory(unsigned char* p) {
+extern "C" void FreeMemory(void* p) {
     DeallocateMemory(p);
 }
 
 // ADD THESE TWO NEW FUNCTIONS RIGHT HERE
 
-extern "C" unsigned char* AllocateInputBuffer(int size) {
-    return (unsigned char*) AllocateMemorySize(size);
+extern "C" void* AllocateInputBuffer(int size) {
+    return AllocateMemorySize(size);
 }
 
-extern "C" void FreeInputBuffer(unsigned char* p) {
+extern "C" void FreeInputBuffer(void* p) {
     DeallocateMemory(p);
 }
+

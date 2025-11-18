@@ -430,8 +430,8 @@ public class Decoder {
     private interface SWIDecoderLib extends Library {
         SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
 
-        Pointer AllocateInputBuffer(int size);                      // new
-        void FreeInputBuffer(Pointer p);                           // new
+        Pointer AllocateInputBuffer(int size);
+        void FreeInputBuffer(Pointer p);
 
         Pointer GetDecodedPhotoNative(Pointer photoData, int size, IntByReference outSize);
         void FreeMemory(Pointer p);
