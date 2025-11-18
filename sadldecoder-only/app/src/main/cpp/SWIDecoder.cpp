@@ -7,6 +7,7 @@
 // #include <jni.h>
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
