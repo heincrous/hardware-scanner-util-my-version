@@ -12235,6 +12235,16 @@ extern "C" void FreeMemory(unsigned char* p) {
     DeallocateMemory(p);
 }
 
+// ADD THESE TWO NEW FUNCTIONS RIGHT HERE
+
+extern "C" unsigned char* AllocateInputBuffer(int size) {
+    return (unsigned char*) AllocateMemorySize(size);
+}
+
+extern "C" void FreeInputBuffer(unsigned char* p) {
+    DeallocateMemory(p);
+}
+
 
 
 
