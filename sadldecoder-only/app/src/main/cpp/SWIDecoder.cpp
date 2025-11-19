@@ -12177,15 +12177,19 @@ extern "C" {
 		result.size = image->Width * image->Height;
 		result.raw = image->Raw;
 
-		int data_size = image->Width * image->Height;
-		for (int i = 0; i < data_size; i++)
-		{
-			result.raw[i] = image->Raw[i];
-		}
+		// PATCH
+		// int data_size = image->Width * image->Height;
+		// for (int i = 0; i < data_size; i++)
+		// {
+		// 	result.raw[i] = image->Raw[i];
+		// }
 
 		WiDestroyCmpImage(cmpImage);
 		WiDestroyDecmpOptions(decmpOpts);
-		WiFreeRawImageData(image);
+
+		// PATCH
+		DeallocateMemory(image);
+		// WiFreeRawImageData(image);
 
 		return result;
 	}
