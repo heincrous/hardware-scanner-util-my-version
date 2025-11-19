@@ -11960,13 +11960,27 @@ WiCmpImage* WiCreateCmpImage()
 }
 
 // Address range: 0x1000a600 - 0x1000a61f
+// int WiDestroyCmpImage(WiCmpImage* a1)
+// {
+// 	int result;
+// 	if (a1 != 0) {
+// 		DeallocateMemory(a1);
+// 		a1->CmpData = 0;
+// 		a1->Size = 0;
+// 		result = 1;
+// 	}
+// 	else {
+// 		result = 0;
+// 	}
+// 	return result;
+// }
+
+// PATCH
 int WiDestroyCmpImage(WiCmpImage* a1)
 {
 	int result;
 	if (a1 != 0) {
 		DeallocateMemory(a1);
-		a1->CmpData = 0;
-		a1->Size = 0;
 		result = 1;
 	}
 	else {
@@ -11974,6 +11988,7 @@ int WiDestroyCmpImage(WiCmpImage* a1)
 	}
 	return result;
 }
+
 
 int WiDestroyDecmpOptions(WiDecmpOptions* a1)
 {
