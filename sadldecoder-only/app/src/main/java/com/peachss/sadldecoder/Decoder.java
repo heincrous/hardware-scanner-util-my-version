@@ -414,7 +414,10 @@ public class Decoder {
 
         if (ptr == null || outSize.getValue() <= 0) return null;
 
-        byte[] output = ptr.getByteArray(0, outSize.getValue());
+        int n = outSize.getValue();
+        byte[] output = new byte[n];
+
+        ptr.read(0, output, 0, n);
 
         SWIDecoderLib.INSTANCE.FreeMemory(ptr);
 
