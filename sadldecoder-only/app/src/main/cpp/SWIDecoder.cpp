@@ -552,22 +552,37 @@ unsigned char*** sub_1000E420(unsigned char *** arg_0, int arg_4, int arg_8, int
 
 }
 //k	free []
+
+// void* sub_1000E540(unsigned char*** hMem, int arg_4, int arg_8, int arg_C) {
+//     unsigned char* ebp = hMem[0][0];
+
+// 	// DEBUG PRINT
+//     printf("[F540] base pointer (ebp): %p\n", ebp);
+
+//     if (arg_C > 0)
+//     {
+//         for (int i = arg_C; i > 0; i--) {
+// 			// DEBUG PRINT
+//             printf("[F540] freeing hMem[%d] = %p\n", arg_C - i, hMem[arg_C - i]);
+//             DeallocateMemory(hMem[arg_C - i]);
+//         }
+//     }
+
+// 	// DEBUG PRINT
+//     printf("[F540] freeing hMem outer = %p\n", hMem);
+//     DeallocateMemory(hMem);
+
+//     return ebp;
+// }
+
+// PATCH
 void* sub_1000E540(unsigned char*** hMem, int arg_4, int arg_8, int arg_C) {
     unsigned char* ebp = hMem[0][0];
-
-	// DEBUG PRINT
     printf("[F540] base pointer (ebp): %p\n", ebp);
 
-    if (arg_C > 0)
-    {
-        for (int i = arg_C; i > 0; i--) {
-			// DEBUG PRINT
-            printf("[F540] freeing hMem[%d] = %p\n", arg_C - i, hMem[arg_C - i]);
-            DeallocateMemory(hMem[arg_C - i]);
-        }
-    }
+    // FIX: do not free the inner pointers
+    // They include the actual raw image buffer
 
-	// DEBUG PRINT
     printf("[F540] freeing hMem outer = %p\n", hMem);
     DeallocateMemory(hMem);
 
