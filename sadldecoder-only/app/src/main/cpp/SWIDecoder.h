@@ -586,6 +586,7 @@ void sub_100328F0(int*** arg_0, unsigned char** arg_4, int arg_8, int arg_C);
 
 
 struct WiResultImage {
-	int size;
-	unsigned char* raw;
+    int size;
+    unsigned char* raw;
+    WiRawImage* rawImage;
 };

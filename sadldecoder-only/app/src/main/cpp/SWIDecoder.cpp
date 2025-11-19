@@ -12283,6 +12283,10 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     fflush(stdout);
 
     memcpy(output, decoded.raw, decoded.size);
+
+    // Corrected line
+    WiFreeRawImageData(decoded.rawImage);
+
     *outSize = decoded.size;
 
     printf("[Native] returning output\n");
