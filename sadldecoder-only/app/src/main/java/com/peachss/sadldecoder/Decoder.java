@@ -78,9 +78,9 @@ public class Decoder {
         initialized=true;
     }
 
-    public static byte[] getDecodedPhoto(byte[] photoData){
-        return  Decoder.getDecodedPhoto(photoData,photoData.length);
-    }
+    // public static byte[] getDecodedPhoto(byte[] photoData){
+    //     return  Decoder.getDecodedPhoto(photoData,photoData.length);
+    // }
 
     public static byte[] toPrimitives(Byte[] oBytes) {
 
