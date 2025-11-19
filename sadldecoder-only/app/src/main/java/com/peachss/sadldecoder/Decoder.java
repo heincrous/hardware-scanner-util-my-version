@@ -421,14 +421,14 @@ public class Decoder {
 
         byte[] output = ptr.getByteArray(0, outSize.getValue());
 
-        SWIDecoderLib.INSTANCE.FreeMemory(ptr);
+        // SWIDecoderLib.INSTANCE.FreeMemory(ptr);
 
         return output;
     }
 
     // JNA interface to call the native C++ function
     private interface SWIDecoderLib extends Library {
-        // SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
+        SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
 
         Pointer AllocateInputBuffer(int size);
         void FreeInputBuffer(Pointer p);

@@ -12,7 +12,11 @@
 int factor64 = sizeof(void*) == 4 ? 1 : 2;
 int sifeof8 = sizeof(int);
 long sizeofprt = INTPTR_MAX;
-int sizeof64 = INT64_MAX;
+
+// PATCH
+long long sizeof64 = INT64_MAX;
+// int sizeof64 = INT64_MAX;
+
 int sizeof32 = INT32_MAX;
 
 int memAllocateCnt = 0;
