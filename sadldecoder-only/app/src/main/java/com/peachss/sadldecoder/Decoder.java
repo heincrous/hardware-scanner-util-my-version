@@ -413,8 +413,7 @@ public class Decoder {
 
         IntByReference outSize = new IntByReference();
 
-        PointerByReference ref = SWIDecoderLib.INSTANCE.GetDecodedPhotoNative(photoData, size, outSize);
-        Pointer ptr = ref.getValue();
+        Pointer ptr = SWIDecoderLib.INSTANCE.GetDecodedPhotoNative(photoData, size, outSize);
 
         if (ptr == null || outSize.getValue() <= 0) return null;
 
@@ -435,7 +434,7 @@ public class Decoder {
             java.util.Map.of("jna.nounload", true)
         );
 
-        PointerByReference GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
+        Pointer GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
         void FreeMemory(Pointer p);
     }
 
