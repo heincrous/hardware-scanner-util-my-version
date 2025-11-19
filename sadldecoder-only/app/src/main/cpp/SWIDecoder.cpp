@@ -12325,9 +12325,9 @@ extern "C" unsigned char* GetDecodedPhotoNative(
 }
 
 
-// // extern "C" void FreeMemory(void* p) {
-//     DeallocateMemory(p);
-// }
+extern "C" void FreeMemory(void* p) {
+    DeallocateMemory(p);
+}
 
 extern "C" void* AllocateInputBuffer(int size) {
     return AllocateMemorySize(size);
