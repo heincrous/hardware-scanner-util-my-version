@@ -410,9 +410,7 @@ public class Decoder {
 
         IntByReference outSize = new IntByReference();
 
-        Memory mem = new Memory(size);
-
-        Pointer ptr = SWIDecoderLib.INSTANCE.GetDecodedPhotoNative(mem, size, outSize);
+        Pointer ptr = SWIDecoderLib.INSTANCE.GetDecodedPhotoNative(photoData, size, outSize);
 
         if (ptr == null || outSize.getValue() <= 0) return null;
 
@@ -427,10 +425,7 @@ public class Decoder {
     private interface SWIDecoderLib extends Library {
         SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
 
-        Pointer AllocateInputBuffer(int size);
-        void FreeInputBuffer(Pointer p);
-
-        Pointer GetDecodedPhotoNative(Pointer photoData, int size, IntByReference outSize);
+        Pointer GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
         void FreeMemory(Pointer p);
     }
 
