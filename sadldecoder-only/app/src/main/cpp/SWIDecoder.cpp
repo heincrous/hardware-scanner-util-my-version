@@ -12066,6 +12066,22 @@ int WiDecompress(WiDecmpOptions * arg_0, WiRawImage * arg_4, WiCmpImage* arg_8) 
 	ebx->AppExtensionLength = pesi->AELen_174;
 	DeallocateMemory(pebp);
 	//printf("Alocated : %i, Deallocated %i, Diff %i\n", memAllocateCnt, memDeallocateCnt, memAllocateCnt - memDeallocateCnt);
+
+	// DEBUG PRINTS
+	printf("[WiDecompress] output stats:\n");
+	printf("[WiDecompress] output stats:\n");
+	printf("  pesi->dw0x12C (Width): %d\n", pesi->dw0x12C);
+	printf("  pesi->dw0x128 (Height): %d\n", pesi->dw0x128);
+	printf("  pesi->dw0xD0   (LevelWidth): %d\n", pesi->dw0xD0);
+	printf("  pesi->dw0xCC   (LevelHeight): %d\n", pesi->dw0xCC);
+	printf("  pesi->dw0xF4   (ColorMode): %d\n", pesi->dw0xF4);
+	printf("  pesi->hg_B8    pointer: %p\n", pesi->hg_B8);
+	printf("  ebx->Raw final pointer: %p\n", ebx->Raw);
+
+	int expected = pesi->dw0x12C * pesi->dw0x128;
+	printf("  expected bytes: %d\n", expected);
+	fflush(stdout);
+
 	return pesi->dw0x154;
 }
 
@@ -12138,6 +12154,25 @@ extern "C" {
 
 		errorCode = WiDecompress(decmpOpts, image, cmpImage);
 
+		// DEBUG PRINTS
+		printf("[DecodeImage] After WiDecompress:\n");
+		printf("  Width: %d\n", image->Width);
+		printf("  Height: %d\n", image->Height);
+		printf("  BitsPerPixel: %d\n", image->BitsPerPixel);
+		printf("  Raw pointer: %p\n", image->Raw);
+		printf("  LevelWidth: %d\n", image->LevelWidth);
+		printf("  LevelHeight: %d\n", image->LevelHeight);
+
+		int expectedSize = image->Width * image->Height;
+		printf("  expectedSize (W*H): %d\n", expectedSize);
+
+		if (image->Raw) {
+			printf("  first 32 bytes:\n");
+			for (int i = 0; i < 32 && i < expectedSize; i++)
+				printf("%02X ", image->Raw[i]);
+			printf("\n");
+		}
+		fflush(stdout);
 
 		result.size = image->Width * image->Height;
 		result.raw = image->Raw;
@@ -12155,52 +12190,6 @@ extern "C" {
 		return result;
 	}
 }
-
-
-// extern "C" JNIEXPORT jbyteArray JNICALL
-// Java_com_peachss_sadldecoder_Decoder_getDecodedPhoto(JNIEnv *env, jclass clazz,
-//                                                      jbyteArray photo_data, jint size) {
-
-//     // Check if photo_data is valid
-//     if (photo_data == nullptr) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 1: Get the length of the byte array
-//     jsize length = env->GetArrayLength(photo_data);
-//     if (size > length) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 2: Get a pointer to the byte array
-//     jbyte *input = env->GetByteArrayElements(photo_data, nullptr);
-//     if (input == nullptr) {
-//         return nullptr; // Handle memory allocation failure
-//     }
-
-//     // Step 3: Decode the image
-//     WiResultImage decode = DecodeImage((unsigned char *) input, size + 1);
-
-//     // Step 4: Release the byte array elements
-//     env->ReleaseByteArrayElements(photo_data, input, JNI_COMMIT);
-
-//     // Check if the decoding was successful
-//     if (decode.size <= 0 || decode.raw == nullptr) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 5: Create a new byte array for the decoded data
-//     jbyteArray output = env->NewByteArray(decode.size);
-//     if (output == nullptr) {
-//          return nullptr; // Handle memory allocation failure
-//     }
-
-//     // Step 6: Set the byte array region with the decoded data
-//     env->SetByteArrayRegion(output, 0, decode.size, (jbyte *) decode.raw);
-
-//     // Step 7: Return the output byte array
-//     return output;
-// }
 
 extern "C" unsigned char* GetDecodedPhotoNative(
     void* photo_data,
@@ -12260,7 +12249,6 @@ extern "C" void FreeMemory(void* p) {
     DeallocateMemory(p);
 }
 
-// ADD THESE TWO NEW FUNCTIONS RIGHT HERE
 
 extern "C" void* AllocateInputBuffer(int size) {
     return AllocateMemorySize(size);
@@ -12269,4 +12257,49 @@ extern "C" void* AllocateInputBuffer(int size) {
 extern "C" void FreeInputBuffer(void* p) {
     DeallocateMemory(p);
 }
+
+// extern "C" JNIEXPORT jbyteArray JNICALL
+// Java_com_peachss_sadldecoder_Decoder_getDecodedPhoto(JNIEnv *env, jclass clazz,
+//                                                      jbyteArray photo_data, jint size) {
+
+//     // Check if photo_data is valid
+//     if (photo_data == nullptr) {
+//         return nullptr; // or handle the error appropriately
+//     }
+
+//     // Step 1: Get the length of the byte array
+//     jsize length = env->GetArrayLength(photo_data);
+//     if (size > length) {
+//         return nullptr; // or handle the error appropriately
+//     }
+
+//     // Step 2: Get a pointer to the byte array
+//     jbyte *input = env->GetByteArrayElements(photo_data, nullptr);
+//     if (input == nullptr) {
+//         return nullptr; // Handle memory allocation failure
+//     }
+
+//     // Step 3: Decode the image
+//     WiResultImage decode = DecodeImage((unsigned char *) input, size + 1);
+
+//     // Step 4: Release the byte array elements
+//     env->ReleaseByteArrayElements(photo_data, input, JNI_COMMIT);
+
+//     // Check if the decoding was successful
+//     if (decode.size <= 0 || decode.raw == nullptr) {
+//         return nullptr; // or handle the error appropriately
+//     }
+
+//     // Step 5: Create a new byte array for the decoded data
+//     jbyteArray output = env->NewByteArray(decode.size);
+//     if (output == nullptr) {
+//          return nullptr; // Handle memory allocation failure
+//     }
+
+//     // Step 6: Set the byte array region with the decoded data
+//     env->SetByteArrayRegion(output, 0, decode.size, (jbyte *) decode.raw);
+
+//     // Step 7: Return the output byte array
+//     return output;
+// }
 
