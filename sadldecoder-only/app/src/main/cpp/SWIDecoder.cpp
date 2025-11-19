@@ -12012,22 +12012,42 @@ WiRawImage* WiCreateRawImage()
 	return result;
 }
 
+// void WiFreeRawImageData(WiRawImage* a1) {
+// 	if (a1 == NULL) {
+// 		return;
+// 	}
+// 	if (a1->AppData != NULL || a1->AppData != 0)
+// 	{
+// 		DeallocateMemory(a1->AppData);
+// 		a1->AppData = 0;
+// 	}
+// 	if (a1->CommentLength != 0)
+// 		DeallocateMemory(a1->Comment);
+// 	if (a1->AppExtensionLength != 0)
+// 		DeallocateMemory(a1->AppExtension);
+// 	DeallocateMemory(a1->Raw);
+// 	a1->Raw = 0;
+// 	DeallocateMemory(a1);
+// }
+
+// PATCH
 void WiFreeRawImageData(WiRawImage* a1) {
-	if (a1 == NULL) {
-		return;
-	}
-	if (a1->AppData != NULL || a1->AppData != 0)
-	{
-		DeallocateMemory(a1->AppData);
-		a1->AppData = 0;
-	}
-	if (a1->CommentLength != 0)
-		DeallocateMemory(a1->Comment);
-	if (a1->AppExtensionLength != 0)
-		DeallocateMemory(a1->AppExtension);
-	DeallocateMemory(a1->Raw);
-	a1->Raw = 0;
-	DeallocateMemory(a1);
+    if (a1 == NULL) {
+        return;
+    }
+    if (a1->AppData != NULL)
+        DeallocateMemory(a1->AppData);
+
+    if (a1->CommentLength != 0)
+        DeallocateMemory(a1->Comment);
+
+    if (a1->AppExtensionLength != 0)
+        DeallocateMemory(a1->AppExtension);
+
+    // FIX: do not free a1->Raw here
+    // The caller owns the raw buffer now
+
+    DeallocateMemory(a1);
 }
 
 //Found
