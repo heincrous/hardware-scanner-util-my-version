@@ -12232,7 +12232,7 @@ extern "C" {
 
 		WiDestroyCmpImage(cmpImage);
 		WiDestroyDecmpOptions(decmpOpts);
-		WiFreeRawImageData(image);
+		// WiFreeRawImageData(image);
 
 		printf("[D1] DecodeImage summary:\n");
 		printf("     image->Raw=%p\n", image->Raw);
