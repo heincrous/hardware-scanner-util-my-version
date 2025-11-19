@@ -421,7 +421,7 @@ public class Decoder {
 
         byte[] output = ptr.getByteArray(0, outSize.getValue());
 
-        // SWIDecoderLib.INSTANCE.FreeMemory(ptr);
+        SWIDecoderLib.INSTANCE.FreeMemory(ptr);
 
         return output;
     }
