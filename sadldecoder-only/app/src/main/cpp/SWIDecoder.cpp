@@ -580,14 +580,12 @@ void* sub_1000E540(unsigned char*** hMem, int arg_4, int arg_8, int arg_C) {
     unsigned char* ebp = hMem[0][0];
     printf("[F540] base pointer (ebp): %p\n", ebp);
 
-    // FIX: do not free the inner pointers
-    // They include the actual raw image buffer
-
-    printf("[F540] freeing hMem outer = %p\n", hMem);
-    DeallocateMemory(hMem);
+    // FIX: do not free anything here
+    // The decompressor frees these structures elsewhere or expects caller to manage them
 
     return ebp;
 }
+
 
 //k	free hMem[arg_4] free at hMem[0](void**) - 4 -4
 void sub_1000E580(int*** hMem, int arg_4) {
