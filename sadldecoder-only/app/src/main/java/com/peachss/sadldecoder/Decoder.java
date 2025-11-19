@@ -22,6 +22,7 @@ import com.peachss.sadldecoder.utils.LicenseInfo;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 
 public class Decoder {
