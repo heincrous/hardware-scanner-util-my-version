@@ -12211,7 +12211,7 @@ extern "C" {
 		decmpOpts->Fast = 0;            /* do not use fast decompression method  */
 		decmpOpts->ReadNextByte = NULL; /* do not use user defined bitstream I/0 */
 		decmpOpts->ReadParam = NULL;    /* do not use free variable              */
-		decmpOpts->Sharpening = 1;      /* wavelet sharpen image                 */
+		decmpOpts->Sharpening = 2;      /* wavelet sharpen image                 */
 
 		errorCode = WiDecompress(decmpOpts, image, cmpImage);
 
