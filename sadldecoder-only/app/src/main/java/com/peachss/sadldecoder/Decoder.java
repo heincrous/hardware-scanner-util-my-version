@@ -69,15 +69,17 @@ public class Decoder {
         return new Decoder().decryptLicense(data);
     }
 
-    private static boolean initialized=false;
-    public  static void  initialize()
-    {
-        if (initialized)
-            return;
-        System.loadLibrary("SWIDecoder");
-        initialized=true;
-    }
+    // PATCH
+    // private static boolean initialized=false;
+    // public  static void  initialize()
+    // {
+    //     if (initialized)
+    //         return;
+    //     System.loadLibrary("SWIDecoder");
+    //     initialized=true;
+    // }
 
+    // PATCH
     // public static byte[] getDecodedPhoto(byte[] photoData){
     //     return  Decoder.getDecodedPhoto(photoData,photoData.length);
     // }
