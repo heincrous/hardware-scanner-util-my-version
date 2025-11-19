@@ -12234,6 +12234,16 @@ extern "C" {
 		WiDestroyDecmpOptions(decmpOpts);
 		WiFreeRawImageData(image);
 
+		printf("[D1] DecodeImage summary:\n");
+		printf("     image->Raw=%p\n", image->Raw);
+		printf("     Width=%d Height=%d BitsPerPixel=%d\n",
+			image->Width, image->Height, image->BitsPerPixel);
+		printf("     LevelWidth=%d LevelHeight=%d\n",
+			image->LevelWidth, image->LevelHeight);
+		printf("     result.raw=%p result.size=%d\n",
+			result.raw, result.size);
+		fflush(stdout);
+
 		return result;
 	}
 }
@@ -12243,6 +12253,8 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     int size,
     int* outSize
 ) {
+	printf("[N1] Enter GetDecodedPhotoNative\n");
+	printf("[N1] photo_data=%p size=%d\n", photo_data, size);
     printf("\n[Native] GetDecodedPhotoNative called\n");
     printf("[Native] photo_data pointer: %p\n", photo_data);
     printf("[Native] size: %d\n", size);
@@ -12265,6 +12277,7 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     fflush(stdout);
 
     WiResultImage decoded = DecodeImage(bytes, size);
+	printf("[N2] DecodeImage returned raw=%p size=%d\n", decoded.raw, decoded.size);
 
     printf("[Native] decoded.raw: %p\n", decoded.raw);
     printf("[Native] decoded.size: %d\n", decoded.size);
@@ -12277,21 +12290,22 @@ extern "C" unsigned char* GetDecodedPhotoNative(
         return nullptr;
     }
 
-    unsigned char* output = (unsigned char*) AllocateMemorySize(decoded.size);
+    printf("[N3] Allocating %d bytes\n", decoded.size);
+	unsigned char* output = (unsigned char*) AllocateMemorySize(decoded.size);
+	printf("[N3] Allocation returned %p\n", output);
 
-    printf("[Native] output allocated at: %p\n", output);
     fflush(stdout);
 
-    memcpy(output, decoded.raw, decoded.size);
-
-    // Corrected line
-    WiFreeRawImageData(decoded.rawImage);
+	printf("[N4] memcpy dest=%p src=%p size=%d\n", output, decoded.raw, decoded.size);
+	memcpy(output, decoded.raw, decoded.size);
+	printf("[N4] memcpy done\n");
 
     *outSize = decoded.size;
 
     printf("[Native] returning output\n");
     fflush(stdout);
 
+	printf("[N5] returning pointer=%p size=%d\n", output, decoded.size);
     return output;
 }
 
