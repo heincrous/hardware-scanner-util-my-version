@@ -427,7 +427,11 @@ public class Decoder {
 
     // JNA interface to call the native C++ function
     private interface SWIDecoderLib extends Library {
-        SWIDecoderLib INSTANCE = Native.load("SWIDecoder", SWIDecoderLib.class);
+        SWIDecoderLib INSTANCE = Native.load(
+            "SWIDecoder",
+            SWIDecoderLib.class,
+            java.util.Map.of("jna.nounload", true)
+        );
 
         PointerByReference GetDecodedPhotoNative(byte[] photoData, int size, IntByReference outSize);
         void FreeMemory(Pointer p);
