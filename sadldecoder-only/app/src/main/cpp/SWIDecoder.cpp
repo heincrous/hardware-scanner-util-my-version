@@ -12188,7 +12188,6 @@ extern "C" {
 		WiDestroyDecmpOptions(decmpOpts);
 
 		// PATCH
-		DeallocateMemory(image);
 		// WiFreeRawImageData(image);
 
 		return result;
