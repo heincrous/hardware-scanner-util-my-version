@@ -12190,9 +12190,7 @@ extern "C" {
 
 		WiDestroyCmpImage(cmpImage);
 		WiDestroyDecmpOptions(decmpOpts);
-
-		// PATCH
-		// WiFreeRawImageData(image);
+		WiFreeRawImageData(image);
 
 		return result;
 	}
