@@ -31,7 +31,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
         // Read Base64 from file
-        String sampleBase64_DC = new String(Files.readAllBytes(Paths.get("license_sample.base64"))).trim();
+        String sampleBase64_DC = new String(Files.readAllBytes(Paths.get("com/peachss/sadldecoder/license_sample.base64"))).trim();
 
         byte[] buffer = java.util.Base64.getDecoder().decode(sampleBase64_DC);
 
