@@ -27,14 +27,14 @@ public class Test {
         System.out.println("Initials: " + info.getInitials());
         System.out.println("Surname: " + info.getSurname());
         System.out.println("ID: " + info.getIdNumber());
-        System.out.println("Raw image size: " + info.getRawImage().length);
+        // System.out.println("Raw image size: " + info.getRawImage().length);
 
         byte[] photo = Decoder.getDecodedPhoto(
             Decoder.toPrimitives(info.getRawImage()),
             info.getRawImage().length
         );
 
-        System.out.println("Decoded photo bytes: " + photo.length);
+        // System.out.println("Decoded photo bytes: " + photo.length);
 
         int width = 200;
         int height = 250;
