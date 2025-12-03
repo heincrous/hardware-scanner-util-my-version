@@ -58,7 +58,6 @@ void* AllocateMemorySize(size_t dwBYTEs)
 		result = malloc(dwBYTEs); // GlobalAlloc(0x40u, dwBYTEs);
 		if (result)
 		{
-			//printf("Allocate %p\n", result);
 			memAllocateCnt++;
 			memset(result, 0, dwBYTEs);
 			return result;
@@ -85,7 +84,6 @@ void* ReallocateMemoryAndCopyContents(void* hMem, size_t dwBYTEs, size_t hMemLen
 			if (hMemLen >= dwBYTEs)
 				iecx = dwBYTEs;
 			memcpy(pebx, hMem, iecx);
-			//printf("Reallocate %p -> %p\n", hMem, pebx);
 			free(hMem);	//		GlobalFree(hMem);
 			return pebx;
 		}
@@ -124,16 +122,8 @@ void sub_100014E0(unsigned char** arg_0, int arg_4, int arg_8, unsigned char * a
 //p GlobalFree
 void DeallocateMemory(void* hMem)
 {
-	//try
-	//{
 	memDeallocateCnt++;
-	//printf("Deallocate %p\n", hMem);
 	free(hMem);
-	//}
-	//catch (int ex)
-	//{
-	//	return;
-	//}
 }
 
 //k
@@ -551,34 +541,10 @@ unsigned char*** sub_1000E420(unsigned char *** arg_0, int arg_4, int arg_8, int
 	return var_4;
 
 }
-//k	free []
-
-// void* sub_1000E540(unsigned char*** hMem, int arg_4, int arg_8, int arg_C) {
-//     unsigned char* ebp = hMem[0][0];
-
-// 	// DEBUG PRINT
-//     printf("[F540] base pointer (ebp): %p\n", ebp);
-
-//     if (arg_C > 0)
-//     {
-//         for (int i = arg_C; i > 0; i--) {
-// 			// DEBUG PRINT
-//             printf("[F540] freeing hMem[%d] = %p\n", arg_C - i, hMem[arg_C - i]);
-//             DeallocateMemory(hMem[arg_C - i]);
-//         }
-//     }
-
-// 	// DEBUG PRINT
-//     printf("[F540] freeing hMem outer = %p\n", hMem);
-//     DeallocateMemory(hMem);
-
-//     return ebp;
-// }
 
 // PATCH
 void* sub_1000E540(unsigned char*** hMem, int arg_4, int arg_8, int arg_C) {
     unsigned char* ebp = hMem[0][0];
-    printf("[F540] base pointer (ebp): %p\n", ebp);
 
     // FIX: do not free anything here
     // The decompressor frees these structures elsewhere or expects caller to manage them
@@ -12027,24 +11993,6 @@ WiRawImage* WiCreateRawImage()
 	return result;
 }
 
-// void WiFreeRawImageData(WiRawImage* a1) {
-// 	if (a1 == NULL) {
-// 		return;
-// 	}
-// 	if (a1->AppData != NULL || a1->AppData != 0)
-// 	{
-// 		DeallocateMemory(a1->AppData);
-// 		a1->AppData = 0;
-// 	}
-// 	if (a1->CommentLength != 0)
-// 		DeallocateMemory(a1->Comment);
-// 	if (a1->AppExtensionLength != 0)
-// 		DeallocateMemory(a1->AppExtension);
-// 	DeallocateMemory(a1->Raw);
-// 	a1->Raw = 0;
-// 	DeallocateMemory(a1);
-// }
-
 // PATCH
 void WiFreeRawImageData(WiRawImage* a1) {
     if (a1 == NULL) {
@@ -12120,27 +12068,12 @@ int WiDecompress(WiDecmpOptions * arg_0, WiRawImage * arg_4, WiCmpImage* arg_8) 
 		ieax = pesi->dw0xF0;
 	}
 	ebx->BitsPerPixel = ieax;
-	//edx = 0;
-	//dl = esi->dw0xF4 == 3;
 	ebx->Color = pesi->dw0xF4 == 3/*dl*/;
 	ebx->AppExtension = pesi->AE_170;
 	ebx->AppExtensionLength = pesi->AELen_174;
 	DeallocateMemory(pebp);
-	//printf("Alocated : %i, Deallocated %i, Diff %i\n", memAllocateCnt, memDeallocateCnt, memAllocateCnt - memDeallocateCnt);
-
-	// DEBUG PRINTS
-	printf("[WiDecompress] output stats:\n");
-	printf("[WiDecompress] output stats:\n");
-	printf("  pesi->dw0x12C (Width): %d\n", pesi->dw0x12C);
-	printf("  pesi->dw0x128 (Height): %d\n", pesi->dw0x128);
-	printf("  pesi->dw0xD0   (LevelWidth): %d\n", pesi->dw0xD0);
-	printf("  pesi->dw0xCC   (LevelHeight): %d\n", pesi->dw0xCC);
-	printf("  pesi->dw0xF4   (ColorMode): %d\n", pesi->dw0xF4);
-	printf("  pesi->hg_B8    pointer: %p\n", pesi->hg_B8);
-	printf("  ebx->Raw final pointer: %p\n", ebx->Raw);
 
 	int expected = pesi->dw0x12C * pesi->dw0x128;
-	printf("  expected bytes: %d\n", expected);
 	fflush(stdout);
 
 	return pesi->dw0x154;
@@ -12215,17 +12148,7 @@ extern "C" {
 
 		errorCode = WiDecompress(decmpOpts, image, cmpImage);
 
-		// DEBUG PRINTS
-		printf("[DecodeImage] After WiDecompress:\n");
-		printf("  Width: %d\n", image->Width);
-		printf("  Height: %d\n", image->Height);
-		printf("  BitsPerPixel: %d\n", image->BitsPerPixel);
-		printf("  Raw pointer: %p\n", image->Raw);
-		printf("  LevelWidth: %d\n", image->LevelWidth);
-		printf("  LevelHeight: %d\n", image->LevelHeight);
-
 		int expectedSize = image->Width * image->Height;
-		printf("  expectedSize (W*H): %d\n", expectedSize);
 
 		if (image->Raw) {
 			printf("  first 32 bytes:\n");
@@ -12238,24 +12161,13 @@ extern "C" {
 		result.size = image->Width * image->Height;
 		result.raw = image->Raw;
 
-		// PATCH
-		// int data_size = image->Width * image->Height;
-		// for (int i = 0; i < data_size; i++)
-		// {
-		// 	result.raw[i] = image->Raw[i];
-		// }
-
 		WiDestroyCmpImage(cmpImage);
 		WiDestroyDecmpOptions(decmpOpts);
-		// WiFreeRawImageData(image);
 
-		printf("[D1] DecodeImage summary:\n");
-		printf("     image->Raw=%p\n", image->Raw);
-		printf("     Width=%d Height=%d BitsPerPixel=%d\n",
 			image->Width, image->Height, image->BitsPerPixel);
-		printf("     LevelWidth=%d LevelHeight=%d\n",
+
 			image->LevelWidth, image->LevelHeight);
-		printf("     result.raw=%p result.size=%d\n",
+
 			result.raw, result.size);
 		fflush(stdout);
 
@@ -12268,59 +12180,38 @@ extern "C" unsigned char* GetDecodedPhotoNative(
     int size,
     int* outSize
 ) {
-	printf("[N1] Enter GetDecodedPhotoNative\n");
-	printf("[N1] photo_data=%p size=%d\n", photo_data, size);
-    printf("\n[Native] GetDecodedPhotoNative called\n");
-    printf("[Native] photo_data pointer: %p\n", photo_data);
-    printf("[Native] size: %d\n", size);
     fflush(stdout);
 
     unsigned char* bytes = (unsigned char*) photo_data;
 
     if (!bytes || size <= 0) {
-        printf("[Native] invalid input\n");
         fflush(stdout);
         *outSize = 0;
         return nullptr;
     }
 
-    printf("[Native] first 16 bytes of input:\n");
-    for (int i = 0; i < 16 && i < size; i++) {
-        printf("%02X ", bytes[i]);
-    }
-    printf("\n");
     fflush(stdout);
 
     WiResultImage decoded = DecodeImage(bytes, size);
-	printf("[N2] DecodeImage returned raw=%p size=%d\n", decoded.raw, decoded.size);
 
-    printf("[Native] decoded.raw: %p\n", decoded.raw);
-    printf("[Native] decoded.size: %d\n", decoded.size);
     fflush(stdout);
 
     if (decoded.size <= 0 || decoded.raw == nullptr) {
-        printf("[Native] decode failed\n");
         fflush(stdout);
         *outSize = 0;
         return nullptr;
     }
 
-    printf("[N3] Allocating %d bytes\n", decoded.size);
 	unsigned char* output = (unsigned char*) AllocateMemorySize(decoded.size);
-	printf("[N3] Allocation returned %p\n", output);
 
     fflush(stdout);
 
-	printf("[N4] memcpy dest=%p src=%p size=%d\n", output, decoded.raw, decoded.size);
 	memcpy(output, decoded.raw, decoded.size);
-	printf("[N4] memcpy done\n");
 
     *outSize = decoded.size;
 
-    printf("[Native] returning output\n");
     fflush(stdout);
 
-	printf("[N5] returning pointer=%p size=%d\n", output, decoded.size);
     return output;
 }
 
@@ -12336,49 +12227,3 @@ extern "C" void* AllocateInputBuffer(int size) {
 extern "C" void FreeInputBuffer(void* p) {
     DeallocateMemory(p);
 }
-
-// extern "C" JNIEXPORT jbyteArray JNICALL
-// Java_com_peachss_sadldecoder_Decoder_getDecodedPhoto(JNIEnv *env, jclass clazz,
-//                                                      jbyteArray photo_data, jint size) {
-
-//     // Check if photo_data is valid
-//     if (photo_data == nullptr) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 1: Get the length of the byte array
-//     jsize length = env->GetArrayLength(photo_data);
-//     if (size > length) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 2: Get a pointer to the byte array
-//     jbyte *input = env->GetByteArrayElements(photo_data, nullptr);
-//     if (input == nullptr) {
-//         return nullptr; // Handle memory allocation failure
-//     }
-
-//     // Step 3: Decode the image
-//     WiResultImage decode = DecodeImage((unsigned char *) input, size + 1);
-
-//     // Step 4: Release the byte array elements
-//     env->ReleaseByteArrayElements(photo_data, input, JNI_COMMIT);
-
-//     // Check if the decoding was successful
-//     if (decode.size <= 0 || decode.raw == nullptr) {
-//         return nullptr; // or handle the error appropriately
-//     }
-
-//     // Step 5: Create a new byte array for the decoded data
-//     jbyteArray output = env->NewByteArray(decode.size);
-//     if (output == nullptr) {
-//          return nullptr; // Handle memory allocation failure
-//     }
-
-//     // Step 6: Set the byte array region with the decoded data
-//     env->SetByteArrayRegion(output, 0, decode.size, (jbyte *) decode.raw);
-
-//     // Step 7: Return the output byte array
-//     return output;
-// }
-
