@@ -1,3 +1,4 @@
+package com.peachss.sadldecoder;
 import com.peachss.sadldecoder.Decoder;
 import com.peachss.sadldecoder.utils.LicenseInfo;
 
